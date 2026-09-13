@@ -9,10 +9,19 @@ export default function AddProduct() {
     name: "", category: "Vegetable", price: "", unit: "kg",
     quantity_available: "", description: "",
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +33,32 @@ export default function AddProduct() {
     }
 
     setLoading(true);
-    const { error } = await supabase.from("products").insert({
+    let imageUrl = null;
+
+    // Only attempt an upload if the farmer actually picked a photo.
+    if (imageFile) {
+      const fileExt = imageFile.name.split(".").pop();
+      const filePath = `${userData.user.id}/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("product-images")
+        .upload(filePath, imageFile);
+
+      if (uploadError) {
+        setError("Image upload failed: " + uploadError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Turn the uploaded file's path into a public URL we can store and display.
+      const { data: publicUrlData } = supabase.storage
+        .from("product-images")
+        .getPublicUrl(filePath);
+
+      imageUrl = publicUrlData.publicUrl;
+    }
+
+    const { error: insertError } = await supabase.from("products").insert({
       farmer_id: userData.user.id,
       name: form.name,
       category: form.category,
@@ -32,11 +66,12 @@ export default function AddProduct() {
       unit: form.unit,
       quantity_available: Number(form.quantity_available),
       description: form.description,
+      image_url: imageUrl,
       is_active: true,
     });
     setLoading(false);
 
-    if (error) setError(error.message);
+    if (insertError) setError(insertError.message);
     else router.push("/farmer/dashboard");
   };
 
@@ -46,6 +81,13 @@ export default function AddProduct() {
       <main className="max-w-md mx-auto p-6">
         <h1 className="text-2xl font-bold mb-5">Add a Product</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Product photo</label>
+            {preview && (
+              <img src={preview} alt="Preview" className="w-full h-40 object-cover rounded mb-2 border" />
+            )}
+            <input type="file" accept="image/*" onChange={handleImageChange} className="w-full text-sm" />
+          </div>
           <div>
             <label className="block text-sm font-medium mb-1">Product name</label>
             <input name="name" required onChange={handleChange} className="w-full border rounded px-3 py-2" />

@@ -58,6 +58,9 @@ export default function ProductDetail() {
     <div>
       <Navbar />
       <main className="max-w-2xl mx-auto p-6">
+        {product.image_url && (
+  <img src={product.image_url} alt={product.name} className="w-full h-64 object-cover rounded-lg mb-4" />
+)}
         <h1 className="text-2xl font-bold">{product.name}</h1>
         <p className="text-gray-500 mb-4">
           Sold by {product.profiles?.farm_name} · {product.profiles?.location}

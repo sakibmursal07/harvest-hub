@@ -13,8 +13,6 @@ export default function Home() {
 
   async function loadProducts() {
     setLoading(true);
-    // Pull every active product, plus the farmer's name via a join,
-    // ordered so newest listings show first.
     const { data, error } = await supabase
       .from("products")
       .select("*, profiles(farm_name, location)")
@@ -45,16 +43,25 @@ export default function Home() {
             <Link
               key={p.id}
               href={`/product/${p.id}`}
-              className="block bg-white border rounded-lg p-4 hover:shadow-md transition-shadow"
+              className="block bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
-              <h3 className="font-semibold text-lg">{p.name}</h3>
-              <p className="text-sm text-gray-500">
-                {p.profiles?.farm_name || "Unknown Farm"} · {p.profiles?.location || "—"}
-              </p>
-              <p className="mt-2 font-bold text-leaf">
-                ₹{p.price} / {p.unit}
-              </p>
-              <p className="text-xs text-gray-400 mt-1">{p.quantity_available} available</p>
+              {p.image_url ? (
+                <img src={p.image_url} alt={p.name} className="w-full h-40 object-cover" />
+              ) : (
+                <div className="w-full h-40 bg-gray-100 flex items-center justify-center text-4xl">
+                  🌾
+                </div>
+              )}
+              <div className="p-4">
+                <h3 className="font-semibold text-lg">{p.name}</h3>
+                <p className="text-sm text-gray-500">
+                  {p.profiles?.farm_name || "Unknown Farm"} · {p.profiles?.location || "—"}
+                </p>
+                <p className="mt-2 font-bold text-leaf">
+                  ₹{p.price} / {p.unit}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">{p.quantity_available} available</p>
+              </div>
             </Link>
           ))}
         </div>

@@ -4,17 +4,26 @@ import { supabase } from "../lib/supabaseClient";
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
-    // Check if someone is already logged in when the page loads
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      if (data.user) loadRole(data.user.id);
+    });
 
-    // Keep this in sync if they log in/out while on the page
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) loadRole(session.user.id);
+      else setRole(null);
     });
     return () => listener.subscription.unsubscribe();
   }, []);
+
+  async function loadRole(userId) {
+    const { data } = await supabase.from("profiles").select("role").eq("id", userId).single();
+    setRole(data?.role || null);
+  }
 
   const logout = async () => {
     await supabase.auth.signOut();
@@ -30,6 +39,7 @@ export default function Navbar() {
           <>
             <Link href="/orders">My Orders</Link>
             <Link href="/farmer/dashboard">Farmer Dashboard</Link>
+            {role === "admin" && <Link href="/admin/dashboard">Admin</Link>}
             <button onClick={logout} className="bg-gold text-soil px-3 py-1.5 rounded font-semibold">
               Log out
             </button>
