@@ -5,7 +5,7 @@ import { supabase } from "../lib/supabaseClient";
 
 export default function Signup() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "consumer", farmName: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "consumer", farmName: "", location: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -28,13 +28,14 @@ export default function Signup() {
       return;
     }
 
-    // Step 2: create their profile row (name, role, farm name if applicable)
+    // Step 2: create their profile row (name, role, farm name, and location)
     const userId = data.user.id;
     const { error: profileError } = await supabase.from("profiles").insert({
       id: userId,
       full_name: form.name,
       role: form.role,
       farm_name: form.role === "farmer" ? form.farmName : null,
+      location: form.location || null,
     });
 
     if (profileError) {
@@ -55,15 +56,15 @@ export default function Signup() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Full name</label>
-            <input name="name" required onChange={handleChange} className="w-full border rounded px-3 py-2" />
+            <input name="name" required onChange={handleChange} className="w-full border rounded px-3 py-2" placeholder="e.g. Rahul Patil" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Email</label>
-            <input type="email" name="email" required onChange={handleChange} className="w-full border rounded px-3 py-2" />
+            <input type="email" name="email" required onChange={handleChange} className="w-full border rounded px-3 py-2" placeholder="you@example.com" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Password</label>
-            <input type="password" name="password" required minLength={6} onChange={handleChange} className="w-full border rounded px-3 py-2" />
+            <input type="password" name="password" required minLength={6} onChange={handleChange} className="w-full border rounded px-3 py-2" placeholder="At least 6 characters" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">I am a...</label>
@@ -75,11 +76,23 @@ export default function Signup() {
           {form.role === "farmer" && (
             <div>
               <label className="block text-sm font-medium mb-1">Farm name</label>
-              <input name="farmName" onChange={handleChange} className="w-full border rounded px-3 py-2" />
+              <input name="farmName" required onChange={handleChange} className="w-full border rounded px-3 py-2" placeholder="e.g. Green Valley Farm" />
             </div>
           )}
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-          <button disabled={loading} className="w-full bg-leaf text-white font-semibold py-2.5 rounded">
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {form.role === "farmer" ? "Farm Location (City / District)" : "Your Location (City / District)"}
+            </label>
+            <input
+              name="location"
+              required={form.role === "farmer"}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2"
+              placeholder="e.g. Kolhapur, Maharashtra"
+            />
+          </div>
+          {error && <p className="text-red-600 text-sm bg-red-50 p-2.5 rounded border border-red-200">{error}</p>}
+          <button disabled={loading} className="w-full bg-leaf hover:bg-emerald-800 transition text-white font-semibold py-2.5 rounded">
             {loading ? "Creating account..." : "Sign up"}
           </button>
         </form>
