@@ -8,6 +8,7 @@ const CATEGORIES = ["All", "Vegetable", "Fruit", "Grain", "Dairy"];
 
 export default function Home() {
   const [products, setProducts] = useState([]);
+  const [productRatings, setProductRatings] = useState({});
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -21,12 +22,40 @@ export default function Home() {
     setLoading(true);
     const { data, error } = await supabase
       .from("products")
-      .select("*, profiles(farm_name, location, verified)")
+      .select("*, profiles(farm_name, location, verified, upi_id)")
       .eq("is_active", true)
       .order("created_at", { ascending: false });
 
-    if (error) console.error("Error loading products:", error);
-    else setProducts(data || []);
+    if (error) {
+      console.error("Error loading products:", error);
+    } else {
+      setProducts(data || []);
+    }
+
+    // Load buyer ratings map
+    try {
+      const { data: revData, error: revErr } = await supabase
+        .from("reviews")
+        .select("product_id, rating");
+
+      if (!revErr && revData) {
+        const stats = {};
+        for (const r of revData) {
+          if (!stats[r.product_id]) {
+            stats[r.product_id] = { total: 0, count: 0, avg: 0 };
+          }
+          stats[r.product_id].total += r.rating;
+          stats[r.product_id].count += 1;
+        }
+        for (const pid in stats) {
+          stats[pid].avg = (stats[pid].total / stats[pid].count).toFixed(1);
+        }
+        setProductRatings(stats);
+      }
+    } catch (e) {
+      console.warn("Reviews load catch in index:", e);
+    }
+
     setLoading(false);
   }
 
@@ -51,9 +80,14 @@ export default function Home() {
       .sort((a, b) => {
         if (sortBy === "price_asc") return a.price - b.price;
         if (sortBy === "price_desc") return b.price - a.price;
+        if (sortBy === "rating_desc") {
+          const ratingA = productRatings[a.id]?.avg ? Number(productRatings[a.id].avg) : 0;
+          const ratingB = productRatings[b.id]?.avg ? Number(productRatings[b.id].avg) : 0;
+          return ratingB - ratingA;
+        }
         return new Date(b.created_at) - new Date(a.created_at);
       });
-  }, [products, searchQuery, selectedCategory, sortBy]);
+  }, [products, searchQuery, selectedCategory, sortBy, productRatings]);
 
   // Counts by category
   const categoryCounts = useMemo(() => {
@@ -154,6 +188,7 @@ export default function Home() {
               className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-medium focus:outline-none focus:border-leaf"
             >
               <option value="newest">Newest First</option>
+              <option value="rating_desc">⭐ Top Rated</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>
             </select>
@@ -253,20 +288,40 @@ export default function Home() {
                       {p.name}
                     </h3>
 
-                    {/* Farmer & Location */}
+                    {/* Farmer, Verification & Location */}
                     <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-1">
-                      <span className="font-medium text-gray-700">
+                      <span className="font-medium text-gray-700 truncate">
                         {p.profiles?.farm_name || "Local Farmer"}
                       </span>
                       {p.profiles?.location && (
                         <>
                           <span>·</span>
-                          <span>📍 {p.profiles.location}</span>
+                          <span className="truncate">📍 {p.profiles.location}</span>
                         </>
                       )}
                       {p.profiles?.verified && (
-                        <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-1.5 py-0.2 rounded-full ml-0.5">
+                        <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-1.5 py-0.2 rounded-full shrink-0">
                           ✓
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Rating Pill & UPI Badge */}
+                    <div className="flex items-center justify-between text-xs mt-2.5">
+                      {productRatings[p.id] ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full shrink-0">
+                          ★ {productRatings[p.id].avg}
+                          <span className="text-gray-400 font-normal">({productRatings[p.id].count})</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">
+                          🌱 Fresh Harvest
+                        </span>
+                      )}
+
+                      {p.profiles?.upi_id && (
+                        <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-full">
+                          💳 UPI
                         </span>
                       )}
                     </div>

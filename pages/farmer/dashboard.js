@@ -8,7 +8,7 @@ export default function FarmerDashboard() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [editingProfile, setEditingProfile] = useState(false);
-  const [profileForm, setProfileForm] = useState({ farm_name: "", location: "" });
+  const [profileForm, setProfileForm] = useState({ farm_name: "", location: "", upi_id: "" });
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState("");
 
@@ -34,6 +34,7 @@ export default function FarmerDashboard() {
       setProfileForm({
         farm_name: profileData.farm_name || "",
         location: profileData.location || "",
+        upi_id: profileData.upi_id || "",
       });
     }
 
@@ -52,13 +53,24 @@ export default function FarmerDashboard() {
     e.preventDefault();
     setSavingProfile(true);
     setProfileMessage("");
-    const { error } = await supabase
+
+    let payload = {
+      farm_name: profileForm.farm_name,
+      location: profileForm.location,
+      upi_id: profileForm.upi_id.trim() || null,
+    };
+
+    let { error } = await supabase
       .from("profiles")
-      .update({
-        farm_name: profileForm.farm_name,
-        location: profileForm.location,
-      })
+      .update(payload)
       .eq("id", profile.id);
+
+    // If upi_id column is not added yet, retry without upi_id
+    if (error && error.code === "42703") {
+      delete payload.upi_id;
+      const fallback = await supabase.from("profiles").update(payload).eq("id", profile.id);
+      error = fallback.error;
+    }
 
     setSavingProfile(false);
     if (error) {
@@ -105,9 +117,14 @@ export default function FarmerDashboard() {
                 </span>
               )}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              📍 {profile.location || "Location not set yet"} · {profile.full_name}
-            </p>
+            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 mt-1">
+              <span>📍 {profile.location || "Location not set yet"} · {profile.full_name}</span>
+              {profile.upi_id && (
+                <span className="text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-md font-medium">
+                  💳 UPI: {profile.upi_id}
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex gap-2">
             <button
@@ -148,6 +165,21 @@ export default function FarmerDashboard() {
                   className="w-full border rounded-lg px-3 py-2 text-sm"
                   placeholder="e.g. Kolhapur, Maharashtra"
                 />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Farmer UPI ID / VPA (For direct customer QR code payments)
+                </label>
+                <input
+                  type="text"
+                  value={profileForm.upi_id}
+                  onChange={(e) => setProfileForm({ ...profileForm, upi_id: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2 text-sm"
+                  placeholder="e.g. 9876543210@upi or farm@okhdfcbank"
+                />
+                <p className="text-[11px] text-gray-400 mt-1">
+                  Customers who select "UPI on Delivery" will scan a dynamic QR code linked directly to this UPI ID.
+                </p>
               </div>
             </div>
             {profileMessage && <p className="text-sm text-emerald-700">{profileMessage}</p>}

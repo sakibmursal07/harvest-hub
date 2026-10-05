@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import UpiPaymentModal from "../../components/UpiPaymentModal";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function ProductDetail() {
@@ -16,6 +17,12 @@ export default function ProductDetail() {
   const [placing, setPlacing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  // UPI payment and reviews state
+  const [showUpiModal, setShowUpiModal] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+
   const [deliveryForm, setDeliveryForm] = useState({
     fullName: "",
     phone: "",
@@ -25,19 +32,22 @@ export default function ProductDetail() {
   });
 
   useEffect(() => {
-    if (id) loadProduct();
+    if (id) {
+      loadProduct();
+      loadReviews(id);
+    }
   }, [id]);
 
   async function loadProduct() {
     setLoading(true);
     const { data, error } = await supabase
       .from("products")
-      .select("*, profiles(farm_name, location, verified)")
+      .select("*, profiles(farm_name, location, verified, upi_id)")
       .eq("id", id)
       .single();
 
     if (error) {
-      console.error(error);
+      console.error("Error loading product:", error);
     } else {
       setProduct(data);
       if (data && data.quantity_available > 0) {
@@ -46,6 +56,32 @@ export default function ProductDetail() {
     }
     setLoading(false);
   }
+
+  async function loadReviews(productId) {
+    setReviewsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("*, consumer:profiles!reviews_consumer_id_fkey(full_name)")
+        .eq("product_id", productId)
+        .order("created_at", { ascending: false });
+
+      if (error && error.code !== "42P01") {
+        console.warn("Reviews load notice:", error.message);
+      } else if (data) {
+        setReviews(data);
+      }
+    } catch (e) {
+      console.warn("Reviews load catch:", e);
+    }
+    setReviewsLoading(false);
+  }
+
+  const averageRating = useMemo(() => {
+    if (!reviews || reviews.length === 0) return null;
+    const sum = reviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+    return (sum / reviews.length).toFixed(1);
+  }, [reviews]);
 
   const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
@@ -87,11 +123,13 @@ export default function ProductDetail() {
       payment_method: deliveryForm.paymentMethod,
     };
 
-    // Attempt insert with delivery columns
-    let { error } = await supabase.from("orders").insert(orderPayload);
+    let insertedOrder = null;
+    let { data: insData, error } = await supabase.from("orders").insert(orderPayload).select().single();
 
-    // If delivery columns have not been migrated into orders table yet, fallback gracefully
-    if (error && error.code === "42703") {
+    if (!error) {
+      insertedOrder = insData;
+    } else if (error.code === "42703") {
+      // Fallback if delivery columns aren't in orders table yet
       const basicPayload = {
         consumer_id: userData.user.id,
         farmer_id: product.farmer_id,
@@ -100,8 +138,9 @@ export default function ProductDetail() {
         total_price: Number((product.price * quantity).toFixed(2)),
         status: "pending",
       };
-      const fallback = await supabase.from("orders").insert(basicPayload);
+      const fallback = await supabase.from("orders").insert(basicPayload).select().single();
       error = fallback.error;
+      insertedOrder = fallback.data;
     }
 
     if (error) {
@@ -110,7 +149,11 @@ export default function ProductDetail() {
       return;
     }
 
-    // Try decrementing available inventory locally / in DB
+    if (insertedOrder) {
+      setCreatedOrderId(insertedOrder.id);
+    }
+
+    // Decrement available inventory locally and in DB
     const newStock = Math.max(0, product.quantity_available - quantity);
     await supabase.from("products").update({ quantity_available: newStock }).eq("id", product.id);
 
@@ -155,11 +198,12 @@ export default function ProductDetail() {
   return (
     <div>
       <Navbar />
-      <main className="max-w-3xl mx-auto p-6">
+      <main className="max-w-3xl mx-auto p-6 pb-16">
         <Link href="/" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-leaf mb-5 transition">
           ← Back to Browse
         </Link>
 
+        {/* Product Card */}
         <div className="bg-white border rounded-2xl overflow-hidden shadow-sm">
           {product.image_url ? (
             <img src={product.image_url} alt={product.name} className="w-full h-72 sm:h-96 object-cover" />
@@ -177,7 +221,7 @@ export default function ProductDetail() {
                   {product.category}
                 </span>
                 <h1 className="text-3xl font-bold text-gray-900 mt-2">{product.name}</h1>
-                <p className="text-sm text-gray-600 mt-1 flex items-center gap-1.5">
+                <p className="text-sm text-gray-600 mt-1 flex items-center gap-1.5 flex-wrap">
                   <span>Sold by <strong>{product.profiles?.farm_name || "Local Farm"}</strong></span>
                   <span>·</span>
                   <span>📍 {product.profiles?.location || "Local Producer"}</span>
@@ -187,6 +231,29 @@ export default function ProductDetail() {
                     </span>
                   )}
                 </p>
+
+                {/* Rating Badge & UPI Tag */}
+                <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+                  {averageRating ? (
+                    <div className="flex items-center gap-1 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full text-xs font-semibold text-amber-800">
+                      <span>★ {averageRating}</span>
+                      <span className="text-gray-400 font-normal">
+                        ({reviews.length} {reviews.length === 1 ? "review" : "reviews"})
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full text-xs font-semibold text-emerald-800">
+                      <span>🌱 Fresh Listing</span>
+                      <span className="text-gray-400 font-normal">· Be the first to rate</span>
+                    </div>
+                  )}
+
+                  {product.profiles?.upi_id && (
+                    <span className="flex items-center gap-1 bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-full text-[11px] font-semibold text-purple-700">
+                      💳 UPI Accepted
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="text-right">
@@ -257,6 +324,86 @@ export default function ProductDetail() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Customer Reviews & Quality Ratings Section */}
+        <div className="bg-white border rounded-2xl p-6 sm:p-8 shadow-sm mt-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-gray-100">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <span>⭐ Customer Reviews & Ratings</span>
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                Real feedback from verified community buyers on this harvest.
+              </p>
+            </div>
+
+            {averageRating && (
+              <div className="flex items-center gap-3 bg-amber-50/70 border border-amber-200/80 px-4 py-2 rounded-2xl">
+                <span className="text-3xl font-extrabold text-amber-600">{averageRating}</span>
+                <div className="text-xs">
+                  <div className="flex text-amber-400 text-sm">
+                    {"★".repeat(Math.min(5, Math.max(1, Math.round(Number(averageRating)))))}
+                    {"☆".repeat(Math.max(0, 5 - Math.round(Number(averageRating))))}
+                  </div>
+                  <span className="text-gray-500 font-medium">
+                    Based on {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {reviewsLoading ? (
+            <div className="py-10 text-center text-gray-400 text-sm animate-pulse">
+              Loading reviews...
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="text-center py-10 bg-gray-50/60 rounded-xl border border-dashed border-gray-200 mt-6 p-6">
+              <span className="text-3xl block mb-2">🌿</span>
+              <h4 className="text-base font-bold text-gray-800 mb-1">No Reviews Yet</h4>
+              <p className="text-xs text-gray-500 max-w-md mx-auto">
+                Be among the first to experience this fresh harvest! Order above and leave your rating once delivered.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100 mt-4">
+              {reviews.map((rev) => (
+                <div key={rev.id} className="py-4 first:pt-2 last:pb-0">
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center">
+                        {(rev.consumer?.full_name || "Buyer").charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-gray-900 block leading-tight">
+                          {rev.consumer?.full_name || "Verified Buyer"}
+                        </span>
+                        <span className="text-[10px] text-gray-400">
+                          {new Date(rev.created_at).toLocaleDateString("en-IN", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center text-amber-400 text-sm">
+                      {"★".repeat(rev.rating)}
+                      <span className="text-gray-200">{"★".repeat(Math.max(0, 5 - rev.rating))}</span>
+                    </div>
+                  </div>
+
+                  {rev.comment && (
+                    <p className="text-xs sm:text-sm text-gray-700 mt-2 pl-10 leading-relaxed">
+                      &ldquo;{rev.comment}&rdquo;
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Checkout Modal */}
@@ -347,7 +494,7 @@ export default function ProductDetail() {
                         onChange={(e) => setDeliveryForm({ ...deliveryForm, paymentMethod: e.target.value })}
                         className="accent-emerald-700"
                       />
-                      <span>UPI on Delivery</span>
+                      <span>UPI Payment</span>
                     </label>
                   </div>
                 </div>
@@ -397,18 +544,42 @@ export default function ProductDetail() {
         {/* Order Success Confirmation Modal */}
         {checkoutSuccess && (
           <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-8 text-center shadow-2xl">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+            <div className="bg-white rounded-2xl max-w-md w-full p-7 text-center shadow-2xl">
+              <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-3xl mx-auto mb-3">
                 ✓
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Order Confirmed!</h3>
-              <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+              <h3 className="text-2xl font-bold text-gray-900 mb-1">Order Confirmed!</h3>
+              <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                 Thank you! Your order for <strong>{quantity} {product.unit} of {product.name}</strong> has been received by <strong>{product.profiles?.farm_name || "the farmer"}</strong>.
               </p>
-              <div className="flex flex-col gap-3">
+
+              {/* Instant UPI Payment Banner if user selected UPI */}
+              {deliveryForm.paymentMethod === "upi" && (
+                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4 mb-4 text-left">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-lg">💳</span>
+                    <span className="text-xs font-bold text-emerald-950 uppercase tracking-wide">
+                      Instant Zero-Fee UPI Payment
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-800 leading-relaxed mb-3">
+                    Pay <strong>₹{(product.price * quantity).toFixed(2)}</strong> directly to {product.profiles?.farm_name || "the farmer"}&apos;s UPI ID or pay on delivery.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowUpiModal(true)}
+                    className="w-full bg-leaf hover:bg-emerald-800 text-white font-semibold py-2.5 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition"
+                  >
+                    <span>📱</span>
+                    <span>Scan UPI QR / Pay Now</span>
+                  </button>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-2">
                 <Link
                   href="/orders"
-                  className="bg-leaf hover:bg-emerald-800 text-white font-semibold py-3 rounded-xl transition"
+                  className="bg-leaf hover:bg-emerald-800 text-white font-semibold py-2.5 rounded-xl transition text-sm"
                 >
                   Track in My Orders
                 </Link>
@@ -422,6 +593,17 @@ export default function ProductDetail() {
             </div>
           </div>
         )}
+
+        {/* Dynamic UPI Payment Modal */}
+        <UpiPaymentModal
+          isOpen={showUpiModal}
+          onClose={() => setShowUpiModal(false)}
+          amount={product ? product.price * quantity : 0}
+          orderId={createdOrderId}
+          farmerName={product?.profiles?.farm_name}
+          farmerUpiId={product?.profiles?.upi_id}
+          productName={product?.name}
+        />
       </main>
     </div>
   );

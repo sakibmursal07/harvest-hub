@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
+import UpiPaymentModal from "../components/UpiPaymentModal";
+import ReviewModal from "../components/ReviewModal";
 import { supabase } from "../lib/supabaseClient";
 
 export default function Orders() {
@@ -9,6 +11,11 @@ export default function Orders() {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [activeTab, setActiveTab] = useState("purchases"); // 'purchases' or 'sales'
+
+  // Modals state
+  const [upiModal, setUpiModal] = useState({ isOpen: false, order: null });
+  const [reviewModal, setReviewModal] = useState({ isOpen: false, order: null });
+  const [reviewedOrders, setReviewedOrders] = useState({});
 
   useEffect(() => {
     loadOrders();
@@ -32,17 +39,34 @@ export default function Orders() {
       .single();
     setUserRole(profile?.role || "consumer");
 
-    // Fetch orders with farmer and consumer profiles
+    // Fetch existing reviews submitted by this user
+    try {
+      const { data: userRevs } = await supabase
+        .from("reviews")
+        .select("order_id, rating")
+        .eq("consumer_id", currentUserId);
+
+      if (userRevs) {
+        const revMap = {};
+        userRevs.forEach((r) => {
+          if (r.order_id) revMap[r.order_id] = r.rating;
+        });
+        setReviewedOrders(revMap);
+      }
+    } catch (e) {
+      console.warn("Reviews table check:", e);
+    }
+
+    // Fetch orders with farmer (including upi_id) and consumer profiles
     const { data, error } = await supabase
       .from("orders")
-      .select("*, products(name, unit, price, image_url), farmer:profiles!orders_farmer_id_fkey(farm_name, location), consumer:profiles!orders_consumer_id_fkey(full_name)")
+      .select("*, products(name, unit, price, image_url), farmer:profiles!orders_farmer_id_fkey(farm_name, location, upi_id), consumer:profiles!orders_consumer_id_fkey(full_name)")
       .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Orders fetch error:", error);
     } else {
       setOrders(data || []);
-      // If user is a farmer and has sales orders, default tab can stay purchases unless they have sales
       const salesCount = (data || []).filter((o) => o.farmer_id === currentUserId).length;
       const purchaseCount = (data || []).filter((o) => o.consumer_id === currentUserId).length;
       if (salesCount > 0 && purchaseCount === 0) {
@@ -51,6 +75,10 @@ export default function Orders() {
     }
     setLoading(false);
   }
+
+  const handleReviewSubmitted = (orderId, rating) => {
+    setReviewedOrders((prev) => ({ ...prev, [orderId]: rating }));
+  };
 
   async function updateStatus(orderId, status) {
     const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
@@ -165,7 +193,7 @@ export default function Orders() {
                     <div>{getStatusBadge(o.status)}</div>
                   </div>
 
-                  <div className="pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
+                  <div className="pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 border-t border-gray-50 mt-2">
                     <div className="space-y-1 text-sm text-gray-600">
                       <p>
                         Quantity: <strong>{o.quantity} {o.products?.unit}</strong>
@@ -183,12 +211,41 @@ export default function Orders() {
                       )}
                     </div>
 
-                    <Link
-                      href={`/product/${o.product_id}`}
-                      className="text-xs text-leaf font-semibold hover:underline"
-                    >
-                      View Product Again →
-                    </Link>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {o.payment_method === "upi" && o.status !== "cancelled" && (
+                        <button
+                          onClick={() => setUpiModal({ isOpen: true, order: o })}
+                          className="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs"
+                        >
+                          <span>💳</span>
+                          <span>Pay / View UPI QR</span>
+                        </button>
+                      )}
+
+                      {o.status === "delivered" && (
+                        reviewedOrders[o.id] ? (
+                          <span className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full flex items-center gap-1">
+                            <span>★</span>
+                            <span>Rated {reviewedOrders[o.id]}/5</span>
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => setReviewModal({ isOpen: true, order: o })}
+                            className="text-xs bg-amber-400 hover:bg-amber-500 text-soil font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1"
+                          >
+                            <span>⭐</span>
+                            <span>Rate Produce</span>
+                          </button>
+                        )
+                      )}
+
+                      <Link
+                        href={`/product/${o.product_id}`}
+                        className="text-xs text-leaf font-semibold hover:underline px-2 py-1"
+                      >
+                        View Product →
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))
@@ -301,6 +358,25 @@ export default function Orders() {
             )}
           </div>
         )}
+
+        {/* UPI Payment Modal */}
+        <UpiPaymentModal
+          isOpen={upiModal.isOpen}
+          onClose={() => setUpiModal({ isOpen: false, order: null })}
+          amount={upiModal.order?.total_price}
+          orderId={upiModal.order?.id}
+          farmerName={upiModal.order?.farmer?.farm_name}
+          farmerUpiId={upiModal.order?.farmer?.upi_id}
+          productName={upiModal.order?.products?.name}
+        />
+
+        {/* Review Submission Modal */}
+        <ReviewModal
+          isOpen={reviewModal.isOpen}
+          onClose={() => setReviewModal({ isOpen: false, order: null })}
+          order={reviewModal.order}
+          onSubmitted={handleReviewSubmitted}
+        />
       </main>
     </div>
   );
