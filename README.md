@@ -1,4 +1,5 @@
 # Harvest Hub — Starter Project
+**Live demo:** https://harvest-hub-seven-alpha.vercel.app 
 
 A working farmer-to-consumer marketplace: real login, real database, real orders.
 Built with **Next.js** (frontend + simple backend in one) and **Supabase** (database + auth, hosted for free).
