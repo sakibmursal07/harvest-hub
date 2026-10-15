@@ -1,6 +1,7 @@
 import Head from "next/head";
 import "../styles/globals.css";
 import ChatBot from "../components/ChatBot";
+import AiPriceEstimatorModal from "../components/AiPriceEstimatorModal";
 
 export default function App({ Component, pageProps }) {
   return (
@@ -13,6 +14,7 @@ export default function App({ Component, pageProps }) {
       </Head>
       <Component {...pageProps} />
       <ChatBot />
+      <AiPriceEstimatorModal />
     </>
   );
 }

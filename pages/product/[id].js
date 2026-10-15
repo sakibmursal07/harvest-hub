@@ -23,6 +23,10 @@ export default function ProductDetail() {
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
 
+  // Neighborhood Community Pooling State
+  const [usePooling, setUsePooling] = useState(true);
+  const [selectedPoolName, setSelectedPoolName] = useState("Greenfield Enclave (PIN: 422101)");
+
   const [deliveryForm, setDeliveryForm] = useState({
     fullName: "",
     phone: "",
@@ -32,6 +36,14 @@ export default function ProductDetail() {
   });
 
   useEffect(() => {
+    try {
+      const activePool = localStorage.getItem("harvest_hub_active_pool");
+      if (activePool) {
+        const parsed = JSON.parse(activePool);
+        setSelectedPoolName(`${parsed.name} (PIN: ${parsed.pincode})`);
+      }
+    } catch (e) {}
+
     if (id) {
       loadProduct();
       loadReviews(id);
@@ -110,16 +122,22 @@ export default function ProductDetail() {
 
     setPlacing(true);
 
+    const rawTotal = product.price * quantity;
+    const poolDiscount = usePooling ? rawTotal * 0.12 : 0;
+    const finalTotal = Math.max(0, Number((rawTotal - poolDiscount).toFixed(2)));
+
     const orderPayload = {
       consumer_id: userData.user.id,
       farmer_id: product.farmer_id,
       product_id: product.id,
       quantity: quantity,
-      total_price: Number((product.price * quantity).toFixed(2)),
+      total_price: finalTotal,
       status: "pending",
-      delivery_address: `${deliveryForm.address}${deliveryForm.notes ? ` (Note: ${deliveryForm.notes})` : ""}`,
+      delivery_address: `${usePooling ? `[Community Pool: ${selectedPoolName}] ` : ""}${deliveryForm.address}${deliveryForm.notes ? ` (Note: ${deliveryForm.notes})` : ""}`,
       phone: deliveryForm.phone,
-      delivery_notes: deliveryForm.notes || null,
+      delivery_notes: usePooling
+        ? `Consolidated Neighborhood Pool delivery to ${selectedPoolName}. ${deliveryForm.notes || ""}`
+        : deliveryForm.notes || null,
       payment_method: deliveryForm.paymentMethod,
     };
 
@@ -135,7 +153,7 @@ export default function ProductDetail() {
         farmer_id: product.farmer_id,
         product_id: product.id,
         quantity: quantity,
-        total_price: Number((product.price * quantity).toFixed(2)),
+        total_price: finalTotal,
         status: "pending",
       };
       const fallback = await supabase.from("orders").insert(basicPayload).select().single();
@@ -264,6 +282,21 @@ export default function ProductDetail() {
                 <p className={`text-xs font-semibold mt-1 ${isOutOfStock ? "text-red-600" : "text-emerald-700"}`}>
                   {isOutOfStock ? "Sold Out" : `${product.quantity_available} ${product.unit} in stock`}
                 </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.dispatchEvent(
+                      new CustomEvent("open-ai-price-advisor", {
+                        detail: { cropName: product.name, category: product.category },
+                      })
+                    );
+                  }}
+                  className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-full mt-2 transition shadow-xs"
+                  title="Compare with Mandi Wholesale & Supermarket rates"
+                >
+                  <span>✨</span>
+                  <span>Verify Fair Price (AI)</span>
+                </button>
               </div>
             </div>
 
@@ -499,18 +532,62 @@ export default function ProductDetail() {
                   </div>
                 </div>
 
+                {/* Neighborhood Community Pooling Option */}
+                <div className="p-3.5 bg-emerald-50/70 border border-emerald-300 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-xs sm:text-sm text-emerald-950">
+                      <input
+                        type="checkbox"
+                        checked={usePooling}
+                        onChange={(e) => setUsePooling(e.target.checked)}
+                        className="rounded text-leaf focus:ring-leaf h-4 w-4 accent-emerald-700"
+                      />
+                      <span>🏘️ Join Neighborhood Community Pool</span>
+                    </label>
+                    <span className="text-[10px] uppercase font-extrabold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">
+                      12% OFF
+                    </span>
+                  </div>
+
+                  {usePooling && (
+                    <div className="pt-1 text-xs space-y-1.5 animate-fadeIn">
+                      <p className="text-gray-600 text-[11px]">
+                        Deliver to your neighborhood's consolidated hub to unlock 12% group discount & zero transport waste!
+                      </p>
+                      <select
+                        value={selectedPoolName}
+                        onChange={(e) => setSelectedPoolName(e.target.value)}
+                        className="w-full bg-white border border-emerald-300 rounded-lg p-2 text-xs font-medium text-soil focus:outline-none focus:ring-1 focus:ring-leaf"
+                      >
+                        <option value="Greenfield Enclave (PIN: 422101)">Greenfield Enclave (PIN: 422101)</option>
+                        <option value="Sunrise Heights Apartments (PIN: 411038)">Sunrise Heights Apartments (PIN: 411038)</option>
+                        <option value="Palm Grove Society (PIN: 560038)">Palm Grove Society (PIN: 560038)</option>
+                        <option value="Local Society Hub (PIN: 400001)">Local Society Hub (PIN: 400001)</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+
                 <div className="bg-gray-50 rounded-xl p-4 mt-4 border border-gray-200">
                   <div className="flex justify-between text-sm text-gray-600 mb-1">
                     <span>Item Total ({quantity} {product.unit})</span>
                     <span>₹{(product.price * quantity).toFixed(2)}</span>
                   </div>
+                  {usePooling && (
+                    <div className="flex justify-between text-sm text-emerald-700 font-semibold mb-1">
+                      <span>Neighborhood Pool Discount (12%)</span>
+                      <span>-₹{(product.price * quantity * 0.12).toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm text-gray-600 mb-1">
                     <span>Direct Farm Delivery</span>
                     <span className="text-emerald-700 font-medium">Free</span>
                   </div>
                   <div className="flex justify-between font-bold text-base text-gray-900 pt-2 border-t mt-2">
                     <span>Total Payable</span>
-                    <span className="text-leaf">₹{(product.price * quantity).toFixed(2)}</span>
+                    <span className="text-leaf">
+                      ₹{(product.price * quantity * (usePooling ? 0.88 : 1.0)).toFixed(2)}
+                    </span>
                   </div>
                 </div>
 

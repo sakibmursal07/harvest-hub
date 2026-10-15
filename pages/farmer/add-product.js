@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Navbar from "../../components/Navbar";
 import { supabase } from "../../lib/supabaseClient";
+import AiPriceEstimatorModal from "../../components/AiPriceEstimatorModal";
 
 export default function AddProduct() {
   const router = useRouter();
@@ -21,6 +22,17 @@ export default function AddProduct() {
     if (!file) return;
     setImageFile(file);
     setPreview(URL.createObjectURL(file));
+  };
+
+  const handleApplyPrice = (recPrice, assessment) => {
+    setForm((prev) => ({
+      ...prev,
+      price: recPrice,
+      unit: assessment.unit || prev.unit,
+      description: prev.description
+        ? `${prev.description}\n\n[Assessed Grade: ${assessment.qualityGrade} · Shelf Life: ${assessment.shelfLifeDays}]`
+        : `Farm fresh harvest. Assessed Grade: ${assessment.qualityGrade}. Expected Shelf Life: ${assessment.shelfLifeDays}.`,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -103,12 +115,38 @@ export default function AddProduct() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Price (₹)</label>
-              <input type="number" step="0.01" name="price" required onChange={handleChange} className="w-full border rounded px-3 py-2" />
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">Price (₹)</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.dispatchEvent(
+                      new CustomEvent("open-ai-price-advisor", {
+                        detail: { cropName: form.name || "Tomato", category: form.category },
+                      })
+                    );
+                  }}
+                  className="text-[11px] text-emerald-800 hover:text-emerald-950 bg-emerald-100 hover:bg-emerald-200 px-2 py-0.5 rounded-md font-bold transition flex items-center gap-1 shadow-xs"
+                  title="Calculate fair market benchmark price with AI"
+                >
+                  <span>✨</span>
+                  <span>AI Advisor</span>
+                </button>
+              </div>
+              <input
+                type="number"
+                step="0.01"
+                name="price"
+                value={form.price}
+                required
+                onChange={handleChange}
+                placeholder="₹ Amount"
+                className="w-full border rounded px-3 py-2 text-sm"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Unit</label>
-              <select name="unit" onChange={handleChange} value={form.unit} className="w-full border rounded px-3 py-2">
+              <select name="unit" onChange={handleChange} value={form.unit} className="w-full border rounded px-3 py-2 text-sm">
                 <option value="kg">kg</option>
                 <option value="dozen">dozen</option>
                 <option value="bunch">bunch</option>
@@ -129,6 +167,7 @@ export default function AddProduct() {
             {loading ? "Saving..." : "List Product"}
           </button>
         </form>
+        <AiPriceEstimatorModal onApplyPrice={handleApplyPrice} />
       </main>
     </div>
   );

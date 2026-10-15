@@ -3,6 +3,7 @@ import Link from "next/link";
 import Head from "next/head";
 import Navbar from "../components/Navbar";
 import WelcomeModal from "../components/WelcomeModal";
+import CommunityPools from "../components/CommunityPools";
 import { supabase } from "../lib/supabaseClient";
 
 const CATEGORIES = ["All", "Vegetable", "Fruit", "Grain", "Dairy"];
@@ -151,6 +152,9 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="max-w-6xl mx-auto p-6 sm:p-8">
+        {/* Neighborhood Pooling / Group-Buying Innovation */}
+        <CommunityPools />
+
         {/* Filters and Sorting Controls */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-4 border-b border-gray-200">
           {/* Category Filter Pills */}

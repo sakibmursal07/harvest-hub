@@ -55,6 +55,26 @@ export default function Navbar() {
           Browse
         </Link>
 
+        <Link
+          href="/#community-pools"
+          className="text-gray-300 hover:text-emerald-200 transition flex items-center gap-1 text-xs sm:text-sm"
+          title="Community Group-Buying Pools"
+        >
+          <span>🏘️</span>
+          <span className="hidden md:inline">Group Pools</span>
+        </Link>
+
+        <button
+          onClick={() => {
+            window.dispatchEvent(new Event("open-ai-price-advisor"));
+          }}
+          className="text-emerald-300 hover:text-white bg-emerald-900/50 hover:bg-emerald-800/60 border border-emerald-500/40 px-2.5 py-1 rounded-lg transition flex items-center gap-1 text-xs font-semibold shadow-xs"
+          title="AI Fair-Price & Crop Quality Estimator"
+        >
+          <span>✨</span>
+          <span>AI Pricing</span>
+        </button>
+
         <button
           onClick={() => {
             if (router.pathname !== "/") {

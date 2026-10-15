@@ -2,9 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
 const SUGGESTIONS = [
+  "✨ What is the fair price for Organic Tomatoes today?",
+  "🏘️ How does Neighborhood Group Buying work?",
+  "🥕 Show available farm vegetables",
   "🍎 What fresh fruits are in stock?",
-  "🥕 Show available vegetables",
-  "🌾 What grains or rice do you have?",
   "👨‍🌾 How do I list produce as a farmer?",
 ];
 
