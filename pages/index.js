@@ -5,16 +5,26 @@ import Navbar from "../components/Navbar";
 import WelcomeModal from "../components/WelcomeModal";
 import CommunityPools from "../components/CommunityPools";
 import { supabase } from "../lib/supabaseClient";
+import { useLanguage } from "../context/LanguageContext";
 
 const CATEGORIES = ["All", "Vegetable", "Fruit", "Grain", "Dairy"];
 
 export default function Home() {
+  const { t } = useLanguage();
   const [products, setProducts] = useState([]);
   const [productRatings, setProductRatings] = useState({});
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("newest");
+
+  const categoryNames = {
+    All: t("cat_all"),
+    Vegetable: t("cat_vegetable"),
+    Fruit: t("cat_fruit"),
+    Grain: t("cat_grain"),
+    Dairy: t("cat_dairy"),
+  };
 
   useEffect(() => {
     loadProducts();
@@ -119,20 +129,20 @@ export default function Home() {
       <section className="bg-gradient-to-b from-soil to-[#3d3223] text-white py-12 px-6 shadow-inner">
         <div className="max-w-5xl mx-auto text-center">
           <span className="inline-block bg-leaf/40 border border-leaf text-emerald-200 text-xs uppercase tracking-widest px-3 py-1 rounded-full font-semibold mb-3">
-            Direct Farm-to-Table Marketplace
+            {t("hero_tag")}
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight mb-4">
-            Fresh Produce, Straight From the Soil
+            {t("hero_title")}
           </h1>
           <p className="text-gray-300 text-base sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-            Skip the middleman. Connect directly with local verified farmers for crisp vegetables, sweet seasonal fruits, and wholesome grains.
+            {t("hero_desc")}
           </p>
 
           {/* Search Bar in Hero */}
           <div className="max-w-2xl mx-auto relative">
             <input
               type="text"
-              placeholder="Search by vegetable, fruit, grain, or farm name..."
+              placeholder={t("search_placeholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white text-gray-900 rounded-2xl py-3.5 pl-12 pr-10 text-sm sm:text-base shadow-xl focus:outline-none focus:ring-2 focus:ring-leaf transition"
@@ -169,7 +179,7 @@ export default function Home() {
                       : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                   }`}
                 >
-                  <span>{cat}</span>
+                  <span>{categoryNames[cat] || cat}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                       isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
@@ -184,16 +194,16 @@ export default function Home() {
 
           {/* Sorting Dropdown */}
           <div className="flex items-center gap-2 self-end sm:self-auto text-sm">
-            <label className="text-gray-500 text-xs font-medium">Sort by:</label>
+            <label className="text-gray-500 text-xs font-medium">{t("sort_label")}</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-medium focus:outline-none focus:border-leaf"
             >
-              <option value="newest">Newest First</option>
-              <option value="rating_desc">⭐ Top Rated</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
+              <option value="newest">{t("sort_newest")}</option>
+              <option value="rating_desc">{t("sort_top_rated")}</option>
+              <option value="price_asc">{t("sort_price_low")}</option>
+              <option value="price_desc">{t("sort_price_high")}</option>
             </select>
           </div>
         </div>
@@ -282,7 +292,7 @@ export default function Home() {
                           : "bg-emerald-100 text-emerald-800"
                       }`}
                     >
-                      {isOutOfStock ? "Sold Out" : `${p.quantity_available} ${p.unit} in stock`}
+                      {isOutOfStock ? t("sold_out") : `${p.quantity_available} ${p.unit} ${t("in_stock")}`}
                     </span>
                   </div>
 
@@ -318,7 +328,7 @@ export default function Home() {
                         </span>
                       ) : (
                         <span className="inline-flex items-center text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">
-                          🌱 Fresh Harvest
+                          {t("fresh_harvest")}
                         </span>
                       )}
 
@@ -332,7 +342,7 @@ export default function Home() {
                     {/* Price and CTA */}
                     <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
                       <div>
-                        <span className="text-xs text-gray-400 block">Price:</span>
+                        <span className="text-xs text-gray-400 block">{t("price_label")}</span>
                         <p className="text-xl font-extrabold text-leaf">
                           ₹{p.price}
                           <span className="text-xs font-normal text-gray-500"> / {p.unit}</span>
@@ -346,7 +356,7 @@ export default function Home() {
                             : "bg-emerald-50 text-leaf group-hover:bg-leaf group-hover:text-white"
                         }`}
                       >
-                        {isOutOfStock ? "Unavailable" : "Buy Direct →"}
+                        {isOutOfStock ? t("sold_out") : t("btn_buy_direct")}
                       </span>
                     </div>
                   </div>

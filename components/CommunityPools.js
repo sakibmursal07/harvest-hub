@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useLanguage } from "../context/LanguageContext";
 
 const DEFAULT_POOLS = [
   {
@@ -38,6 +39,7 @@ const DEFAULT_POOLS = [
 ];
 
 export default function CommunityPools() {
+  const { t } = useLanguage();
   const [pools, setPools] = useState(DEFAULT_POOLS);
   const [searchPin, setSearchPin] = useState("");
   const [activePoolId, setActivePoolId] = useState(null);
@@ -132,14 +134,13 @@ export default function CommunityPools() {
         <div>
           <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2">
             <span>🏘️</span>
-            <span>Neighborhood Pooling Innovation</span>
+            <span>{t("pools_badge")}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-soil tracking-tight">
-            Community Group-Buying Hub
+            {t("pools_title")}
           </h2>
           <p className="text-gray-600 text-xs sm:text-sm mt-1 max-w-xl">
-            Pool orders with your neighbors in the same apartment or locality. When a pool reaches 5 orders, 
-            everyone gets <strong className="text-emerald-700">Free Direct-from-Farm Delivery</strong> + <strong className="text-emerald-700">12% Group Discount</strong>!
+            {t("pools_desc")}
           </p>
         </div>
 
@@ -149,7 +150,7 @@ export default function CommunityPools() {
             className="text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl bg-leaf hover:bg-emerald-800 text-white shadow-sm transition flex items-center gap-1.5"
           >
             <span>+</span>
-            <span>Start a Pool in My Society</span>
+            <span>{t("pools_start_btn")}</span>
           </button>
         </div>
       </div>
@@ -185,7 +186,7 @@ export default function CommunityPools() {
         <div className="relative flex-1 w-full">
           <input
             type="text"
-            placeholder="Search active pools by PIN code, society name, or colony..."
+            placeholder={t("pools_search_placeholder")}
             value={searchPin}
             onChange={(e) => setSearchPin(e.target.value)}
             className="w-full text-xs sm:text-sm bg-[#FAF7F2] border border-gray-200 rounded-xl py-2.5 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-leaf"
@@ -230,7 +231,7 @@ export default function CommunityPools() {
                 <div className="my-3">
                   <div className="flex items-center justify-between text-xs font-semibold mb-1">
                     <span className="text-soil">
-                      {pool.currentMembers}/{pool.targetMembers} Neighbors Joined
+                      {pool.currentMembers}/{pool.targetMembers} {t("pools_members_joined")}
                     </span>
                     <span className="text-emerald-700">{progressPercent}%</span>
                   </div>
@@ -253,12 +254,12 @@ export default function CommunityPools() {
                 <div className="space-y-1.5 py-2 text-[11px] text-gray-600 border-t border-gray-100">
                   <div className="flex items-center gap-1.5">
                     <span>🚚</span>
-                    <span>Consolidated Delivery: {pool.deliveryWindow}</span>
+                    <span>{t("pools_consolidated_delivery")} {pool.deliveryWindow}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span>🌱</span>
                     <span className="text-emerald-800 font-semibold">
-                      Saves ~{pool.carbonSavedKg} kg CO₂ in transport
+                      Saves ~{pool.carbonSavedKg} kg CO₂ {t("pools_carbon_saved")}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -276,15 +277,14 @@ export default function CommunityPools() {
                     className="w-full py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs"
                   >
                     <span>✓</span>
-                    <span>Joined — Discount Active</span>
+                    <span>{t("pools_joined_badge")}</span>
                   </button>
                 ) : (
                   <button
                     onClick={() => handleJoinPool(pool)}
                     className="w-full py-2 rounded-xl bg-soil hover:bg-[#3d3223] text-white font-semibold text-xs transition flex items-center justify-center gap-1 shadow-xs"
                   >
-                    <span>Join Pool (Get 12% OFF)</span>
-                    <span>→</span>
+                    <span>{t("pools_join_btn")}</span>
                   </button>
                 )}
               </div>

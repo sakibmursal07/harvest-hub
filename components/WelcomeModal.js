@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function WelcomeModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     // Show ONLY once when the user first starts/opens the website in this browser session!
@@ -83,7 +85,7 @@ export default function WelcomeModal() {
             className="absolute top-4 right-4 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 text-gray-100 hover:text-white transition-all duration-200 flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 group border border-white/10"
             title="Skip directly to website"
           >
-            <span>Skip</span>
+            <span>{t("welcome_skip")}</span>
             <span className="text-[11px] opacity-75 group-hover:rotate-90 transition-transform duration-200">✕</span>
           </button>
 
@@ -96,21 +98,20 @@ export default function WelcomeModal() {
           </div>
           
           <span className="block text-[11px] uppercase tracking-widest font-semibold text-emerald-300 mb-1 animate-pulse-subtle">
-            Official Farm-to-Table Platform
+            {t("welcome_badge")}
           </span>
           <h2 id="welcome-modal-title" className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Welcome to Harvest Hub
+            {t("welcome_title")}
           </h2>
           <p className="text-gray-300 text-xs sm:text-sm font-medium mt-1 max-w-md mx-auto">
-            Direct Farm-to-Consumer Agricultural Marketplace
+            {t("welcome_sub")}
           </p>
         </div>
 
         {/* Start Window Body */}
         <div className="p-6 sm:p-8 space-y-5">
           <p className="text-gray-700 text-xs sm:text-sm text-center leading-relaxed font-normal">
-            Harvest Hub directly connects verified agricultural producers with consumers. 
-            By eliminating intermediaries, we ensure fair earnings for farmers and freshly harvested, nutritious produce for households.
+            {t("welcome_desc")}
           </p>
 
           {/* 3 Core Pillars with Interactive Hover Animations */}
@@ -120,10 +121,10 @@ export default function WelcomeModal() {
                 🚜
               </span>
               <h4 className="text-xs font-bold text-soil group-hover:text-emerald-800 transition-colors">
-                Direct Sourcing
+                {t("welcome_p1_title")}
               </h4>
               <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">
-                Zero middleman commissions. 100% fair grower payout.
+                {t("welcome_p1_desc")}
               </p>
             </div>
 
@@ -132,10 +133,10 @@ export default function WelcomeModal() {
                 🌱
               </span>
               <h4 className="text-xs font-bold text-soil group-hover:text-emerald-800 transition-colors">
-                Peak Freshness
+                {t("welcome_p2_title")}
               </h4>
               <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">
-                Harvested within 24–48 hours of scheduled fulfillment.
+                {t("welcome_p2_desc")}
               </p>
             </div>
 
@@ -144,10 +145,10 @@ export default function WelcomeModal() {
                 🌍
               </span>
               <h4 className="text-xs font-bold text-soil group-hover:text-emerald-800 transition-colors">
-                Eco-Friendly
+                {t("welcome_p3_title")}
               </h4>
               <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">
-                Fewer transit miles, reducing cold-storage emissions.
+                {t("welcome_p3_desc")}
               </p>
             </div>
           </div>
@@ -156,14 +157,14 @@ export default function WelcomeModal() {
           <div className="bg-emerald-50/80 border border-emerald-200/70 rounded-xl p-3 flex items-center justify-between gap-2 text-xs transition-all hover:bg-emerald-50">
             <div className="flex items-center gap-2 text-emerald-950 font-medium">
               <span className="text-base animate-bounce">👩‍🌾</span>
-              <span>Are you a registered producer?</span>
+              <span>{t("welcome_farmer_q")}</span>
             </div>
             <Link
               href="/signup"
               onClick={handleDismiss}
               className="text-leaf font-bold hover:underline hover:text-emerald-800 whitespace-nowrap"
             >
-              List your farm →
+              {t("welcome_farmer_link")}
             </Link>
           </div>
 
@@ -174,7 +175,7 @@ export default function WelcomeModal() {
               onClick={handleDismiss}
               className="w-full sm:flex-1 py-3 px-5 rounded-xl bg-leaf hover:bg-emerald-800 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-200 transform active:scale-98 focus:outline-none focus:ring-2 focus:ring-leaf/50 flex items-center justify-center gap-2 group"
             >
-              <span>Explore Marketplace</span>
+              <span>{t("welcome_enter_btn")}</span>
               <span className="group-hover:translate-x-1.5 transition-transform duration-200 text-base">
                 →
               </span>
@@ -185,7 +186,7 @@ export default function WelcomeModal() {
               onClick={handleDismiss}
               className="w-full sm:w-auto py-3 px-6 rounded-xl border border-gray-300 bg-white hover:bg-gray-100 hover:text-gray-900 text-gray-700 font-semibold text-sm transition-all duration-200 active:scale-95 focus:outline-none shadow-xs"
             >
-              Skip
+              {t("welcome_skip")}
             </button>
           </div>
 

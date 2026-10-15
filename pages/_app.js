@@ -2,10 +2,11 @@ import Head from "next/head";
 import "../styles/globals.css";
 import ChatBot from "../components/ChatBot";
 import AiPriceEstimatorModal from "../components/AiPriceEstimatorModal";
+import { LanguageProvider } from "../context/LanguageContext";
 
 export default function App({ Component, pageProps }) {
   return (
-    <>
+    <LanguageProvider>
       <Head>
         <title>Harvest Hub | Fresh Produce From Local Farmers</title>
         <meta name="description" content="Connect directly with local farmers and buy farm-fresh vegetables, fruits, and grains with local delivery." />
@@ -15,6 +16,6 @@ export default function App({ Component, pageProps }) {
       <Component {...pageProps} />
       <ChatBot />
       <AiPriceEstimatorModal />
-    </>
+    </LanguageProvider>
   );
 }
