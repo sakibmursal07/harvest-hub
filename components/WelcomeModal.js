@@ -4,26 +4,25 @@ import Link from "next/link";
 export default function WelcomeModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [dontShowAgain, setDontShowAgain] = useState(true);
 
   useEffect(() => {
-    // Check if the user has already dismissed the welcome window
-    try {
-      const dismissed = localStorage.getItem("harvest_hub_welcome_dismissed");
-      if (!dismissed) {
-        setIsOpen(true);
-      }
-    } catch (e) {
+    // Automatically trigger the Start Window whenever the website is opened!
+    // 350ms slight delay allows the page to load smoothly before the Start Window slides in
+    const timer = setTimeout(() => {
       setIsOpen(true);
-    }
+    }, 350);
 
-    // Support re-opening manually (e.g. from navbar "About" or demo button)
+    // Support manual re-opening via Navbar "About" or custom button
     const handleReopen = () => {
       setIsClosing(false);
       setIsOpen(true);
     };
     window.addEventListener("open-harvest-intro", handleReopen);
-    return () => window.removeEventListener("open-harvest-intro", handleReopen);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("open-harvest-intro", handleReopen);
+    };
   }, []);
 
   const handleDismiss = () => {
@@ -31,13 +30,6 @@ export default function WelcomeModal() {
     setIsClosing(true);
 
     setTimeout(() => {
-      try {
-        if (dontShowAgain) {
-          localStorage.setItem("harvest_hub_welcome_dismissed", "true");
-        }
-      } catch (e) {
-        console.warn("Could not save welcome modal preference:", e);
-      }
       setIsOpen(false);
       setIsClosing(false);
     }, 240); // Matches .animate-modal-out duration
@@ -52,7 +44,7 @@ export default function WelcomeModal() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, isClosing, dontShowAgain]);
+  }, [isOpen, isClosing]);
 
   if (!isOpen) return null;
 
@@ -65,7 +57,7 @@ export default function WelcomeModal() {
       aria-modal="true"
       aria-labelledby="welcome-modal-title"
       onClick={(e) => {
-        // Dismiss if clicking outer backdrop
+        // Dismiss if clicking backdrop
         if (e.target === e.currentTarget) handleDismiss();
       }}
     >
@@ -74,14 +66,14 @@ export default function WelcomeModal() {
           isClosing ? "animate-modal-out" : "animate-modal-in"
         }`}
       >
-        {/* Top Header Card */}
+        {/* Top Header Banner */}
         <div className="bg-gradient-to-br from-soil via-[#382d1f] to-[#251e15] text-white px-6 py-7 sm:px-8 sm:py-8 text-center relative border-b border-soil/30 shadow-inner">
           
-          {/* Top Skip Button */}
+          {/* Top-Right Prominent Skip Button */}
           <button
             onClick={handleDismiss}
-            className="absolute top-4 right-4 text-xs font-semibold px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-gray-200 hover:text-white transition-all duration-200 flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 group"
-            title="Skip introduction"
+            className="absolute top-4 right-4 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 text-gray-100 hover:text-white transition-all duration-200 flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 group border border-white/10"
+            title="Skip directly to website"
           >
             <span>Skip</span>
             <span className="text-[11px] opacity-75 group-hover:rotate-90 transition-transform duration-200">✕</span>
@@ -96,17 +88,17 @@ export default function WelcomeModal() {
           </div>
           
           <span className="block text-[11px] uppercase tracking-widest font-semibold text-emerald-300 mb-1 animate-pulse-subtle">
-            Official Farm-to-Table Initiative
+            Official Farm-to-Table Platform
           </span>
           <h2 id="welcome-modal-title" className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Welcome to Harvest Hub
           </h2>
           <p className="text-gray-300 text-xs sm:text-sm font-medium mt-1 max-w-md mx-auto">
-            Direct Farm-to-Consumer Agricultural Platform
+            Direct Farm-to-Consumer Agricultural Marketplace
           </p>
         </div>
 
-        {/* Modal Body */}
+        {/* Start Window Body */}
         <div className="p-6 sm:p-8 space-y-5">
           <p className="text-gray-700 text-xs sm:text-sm text-center leading-relaxed font-normal">
             Harvest Hub directly connects verified agricultural producers with consumers. 
@@ -167,41 +159,26 @@ export default function WelcomeModal() {
             </Link>
           </div>
 
-          {/* User Controls and Actions */}
-          <div className="pt-2 border-t border-gray-200/70 flex flex-col gap-3">
-            <div className="flex items-center justify-between text-xs text-gray-500 px-1">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={dontShowAgain}
-                  onChange={(e) => setDontShowAgain(e.target.checked)}
-                  className="rounded border-gray-300 text-leaf focus:ring-leaf h-3.5 w-3.5 cursor-pointer accent-leaf"
-                />
-                <span className="hover:text-gray-700 transition">Don't show this start window again</span>
-              </label>
-              <span className="text-[11px] text-gray-400">Esc to skip</span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center gap-2.5">
-              <button
-                type="button"
-                onClick={handleDismiss}
-                className="w-full sm:flex-1 py-3 px-5 rounded-xl bg-leaf hover:bg-emerald-800 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-200 transform active:scale-98 focus:outline-none focus:ring-2 focus:ring-leaf/50 flex items-center justify-center gap-2 group"
-              >
-                <span>Enter Marketplace</span>
-                <span className="group-hover:translate-x-1.5 transition-transform duration-200 text-base">
-                  →
-                </span>
-              </button>
-              
-              <button
-                type="button"
-                onClick={handleDismiss}
-                className="w-full sm:w-auto py-3 px-6 rounded-xl border border-gray-300 bg-white hover:bg-gray-100 hover:text-gray-900 text-gray-700 font-semibold text-sm transition-all duration-200 active:scale-95 focus:outline-none"
-              >
-                Skip
-              </button>
-            </div>
+          {/* Actions: Enter or Skip */}
+          <div className="pt-2 border-t border-gray-200/70 flex flex-col sm:flex-row items-center gap-2.5">
+            <button
+              type="button"
+              onClick={handleDismiss}
+              className="w-full sm:flex-1 py-3 px-5 rounded-xl bg-leaf hover:bg-emerald-800 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-200 transform active:scale-98 focus:outline-none focus:ring-2 focus:ring-leaf/50 flex items-center justify-center gap-2 group"
+            >
+              <span>Explore Marketplace</span>
+              <span className="group-hover:translate-x-1.5 transition-transform duration-200 text-base">
+                →
+              </span>
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleDismiss}
+              className="w-full sm:w-auto py-3 px-6 rounded-xl border border-gray-300 bg-white hover:bg-gray-100 hover:text-gray-900 text-gray-700 font-semibold text-sm transition-all duration-200 active:scale-95 focus:outline-none shadow-xs"
+            >
+              Skip
+            </button>
           </div>
 
         </div>
