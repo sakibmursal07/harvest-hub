@@ -152,9 +152,6 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="max-w-6xl mx-auto p-6 sm:p-8">
-        {/* Neighborhood Pooling / Group-Buying Innovation */}
-        <CommunityPools />
-
         {/* Filters and Sorting Controls */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-4 border-b border-gray-200">
           {/* Category Filter Pills */}
@@ -358,6 +355,11 @@ export default function Home() {
             })}
           </div>
         )}
+
+        {/* Neighborhood Pooling / Group-Buying Innovation (Positioned Below Produce Catalog) */}
+        <div className="mt-14 pt-10 border-t border-gray-200/80">
+          <CommunityPools />
+        </div>
       </main>
     </div>
   );
