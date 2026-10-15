@@ -6,13 +6,22 @@ export default function WelcomeModal() {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    // Automatically trigger the Start Window whenever the website is opened!
-    // 350ms slight delay allows the page to load smoothly before the Start Window slides in
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 350);
+    // Show ONLY once when the user first starts/opens the website in this browser session!
+    // It will NOT pop up again when clicking 'Browse' or navigating between pages.
+    try {
+      const alreadyShown = sessionStorage.getItem("harvest_hub_session_intro_shown");
+      if (!alreadyShown) {
+        sessionStorage.setItem("harvest_hub_session_intro_shown", "true");
+        const timer = setTimeout(() => {
+          setIsOpen(true);
+        }, 350);
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {
+      // In case sessionStorage is unavailable
+    }
 
-    // Support manual re-opening via Navbar "About" or custom button
+    // Support manual re-opening via Navbar "About" or demo button anytime
     const handleReopen = () => {
       setIsClosing(false);
       setIsOpen(true);
@@ -20,7 +29,6 @@ export default function WelcomeModal() {
     window.addEventListener("open-harvest-intro", handleReopen);
 
     return () => {
-      clearTimeout(timer);
       window.removeEventListener("open-harvest-intro", handleReopen);
     };
   }, []);
