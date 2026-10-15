@@ -55,6 +55,23 @@ export default function Navbar() {
           Browse
         </Link>
 
+        <button
+          onClick={() => {
+            if (router.pathname !== "/") {
+              router.push("/").then(() => {
+                setTimeout(() => window.dispatchEvent(new Event("open-harvest-intro")), 300);
+              });
+            } else {
+              window.dispatchEvent(new Event("open-harvest-intro"));
+            }
+          }}
+          className="text-gray-300 hover:text-emerald-200 transition flex items-center gap-1 text-xs sm:text-sm"
+          title="View project overview and mission"
+        >
+          <span className="text-xs">ℹ️</span>
+          <span>About</span>
+        </button>
+
         {user ? (
           <>
             <Link

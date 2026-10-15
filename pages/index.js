@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import Navbar from "../components/Navbar";
+import WelcomeModal from "../components/WelcomeModal";
 import { supabase } from "../lib/supabaseClient";
 
 const CATEGORIES = ["All", "Vegetable", "Fruit", "Grain", "Dairy"];
@@ -111,6 +112,7 @@ export default function Home() {
       </Head>
 
       <Navbar />
+      <WelcomeModal />
 
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-soil to-[#3d3223] text-white py-12 px-6 shadow-inner">

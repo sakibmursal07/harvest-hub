@@ -21,6 +21,12 @@ CREATE TABLE IF NOT EXISTS reviews (
 -- 3. Enable Row Level Security (RLS)
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 
+-- 4. Clean up any existing policies first to prevent "policy already exists" errors
+DROP POLICY IF EXISTS "Reviews are viewable by everyone" ON reviews;
+DROP POLICY IF EXISTS "Consumers can insert their own review" ON reviews;
+DROP POLICY IF EXISTS "Consumers can update their own review" ON reviews;
+
+-- 5. Create RLS Policies
 -- Anyone can read verified reviews
 CREATE POLICY "Reviews are viewable by everyone"
   ON reviews FOR SELECT
