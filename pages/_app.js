@@ -1,5 +1,6 @@
 import Head from "next/head";
 import "../styles/globals.css";
+import "leaflet/dist/leaflet.css";
 import ChatBot from "../components/ChatBot";
 import AiPriceEstimatorModal from "../components/AiPriceEstimatorModal";
 import { LanguageProvider } from "../context/LanguageContext";

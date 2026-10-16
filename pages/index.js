@@ -1,11 +1,22 @@
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Head from "next/head";
+import dynamic from "next/dynamic";
 import Navbar from "../components/Navbar";
 import WelcomeModal from "../components/WelcomeModal";
 import CommunityPools from "../components/CommunityPools";
 import { supabase } from "../lib/supabaseClient";
 import { useLanguage } from "../context/LanguageContext";
+import { calculateDistanceKm, resolveFarmCoordinates } from "../lib/geoUtils";
+
+const FarmRadarMap = dynamic(() => import("../components/FarmRadarMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-44 sm:h-64 bg-white rounded-3xl border border-gray-200 animate-pulse flex items-center justify-center text-gray-400 text-sm">
+      🗺️ Loading Farm Radar Map...
+    </div>
+  ),
+});
 
 const CATEGORIES = ["All", "Vegetable", "Fruit", "Grain", "Dairy"];
 
@@ -17,6 +28,28 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("newest");
+  const [userLocation, setUserLocation] = useState(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("harvest_user_location");
+      if (saved) {
+        setUserLocation(JSON.parse(saved));
+      }
+    } catch (e) {}
+  }, []);
+
+  const handleLocationChange = (coords) => {
+    setUserLocation(coords);
+    try {
+      if (coords) {
+        localStorage.setItem("harvest_user_location", JSON.stringify(coords));
+        setSortBy("nearest");
+      } else {
+        localStorage.removeItem("harvest_user_location");
+      }
+    } catch (e) {}
+  };
 
   const categoryNames = {
     All: t("cat_all"),
@@ -74,6 +107,22 @@ export default function Home() {
   // Filtered & Sorted products
   const filteredProducts = useMemo(() => {
     return products
+      .map((p) => {
+        let calculatedDistance = null;
+        if (userLocation) {
+          const farmCoords = resolveFarmCoordinates(
+            p.profiles?.location,
+            p.farmer_id || p.profiles?.farm_name
+          );
+          calculatedDistance = calculateDistanceKm(
+            userLocation.lat,
+            userLocation.lng,
+            farmCoords.lat,
+            farmCoords.lng
+          );
+        }
+        return { ...p, calculatedDistance };
+      })
       .filter((p) => {
         const matchesCategory =
           selectedCategory === "All" ||
@@ -90,6 +139,11 @@ export default function Home() {
         return matchesCategory && (matchesName || matchesFarm || matchesLocation || matchesDesc);
       })
       .sort((a, b) => {
+        if (sortBy === "nearest" && userLocation) {
+          if (a.calculatedDistance == null) return 1;
+          if (b.calculatedDistance == null) return -1;
+          return a.calculatedDistance - b.calculatedDistance;
+        }
         if (sortBy === "price_asc") return a.price - b.price;
         if (sortBy === "price_desc") return b.price - a.price;
         if (sortBy === "rating_desc") {
@@ -99,7 +153,7 @@ export default function Home() {
         }
         return new Date(b.created_at) - new Date(a.created_at);
       });
-  }, [products, searchQuery, selectedCategory, sortBy, productRatings]);
+  }, [products, searchQuery, selectedCategory, sortBy, productRatings, userLocation]);
 
   // Counts by category
   const categoryCounts = useMemo(() => {
@@ -162,6 +216,13 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="max-w-6xl mx-auto p-6 sm:p-8">
+        {/* Hyper-Local Farm Radar Map & Distance Finder */}
+        <FarmRadarMap
+          products={products}
+          userLocation={userLocation}
+          onLocationChange={handleLocationChange}
+        />
+
         {/* Filters and Sorting Controls */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-4 border-b border-gray-200">
           {/* Category Filter Pills */}
@@ -200,6 +261,9 @@ export default function Home() {
               onChange={(e) => setSortBy(e.target.value)}
               className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-medium focus:outline-none focus:border-leaf"
             >
+              {userLocation && (
+                <option value="nearest">{t("sort_nearest")}</option>
+              )}
               <option value="newest">{t("sort_newest")}</option>
               <option value="rating_desc">{t("sort_top_rated")}</option>
               <option value="price_asc">{t("sort_price_low")}</option>
@@ -284,6 +348,14 @@ export default function Home() {
                       {p.category}
                     </span>
 
+                    {/* Distance Badge on Image if userLocation is active */}
+                    {p.calculatedDistance != null && (
+                      <span className="absolute bottom-3 left-3 bg-soil/90 backdrop-blur-sm text-white font-bold text-[11px] px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 border border-white/20">
+                        <span>📍</span>
+                        <span>{p.calculatedDistance} km away</span>
+                      </span>
+                    )}
+
                     {/* Stock Tag */}
                     <span
                       className={`absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full shadow-xs ${
@@ -302,7 +374,7 @@ export default function Home() {
                     </h3>
 
                     {/* Farmer, Verification & Location */}
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-1">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-1 flex-wrap">
                       <span className="font-medium text-gray-700 truncate">
                         {p.profiles?.farm_name || "Local Farmer"}
                       </span>
@@ -315,6 +387,11 @@ export default function Home() {
                       {p.profiles?.verified && (
                         <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-1.5 py-0.2 rounded-full shrink-0">
                           ✓
+                        </span>
+                      )}
+                      {p.calculatedDistance != null && (
+                        <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full shrink-0">
+                          📍 {p.calculatedDistance} km
                         </span>
                       )}
                     </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import UpiPaymentModal from "../../components/UpiPaymentModal";
 import { supabase } from "../../lib/supabaseClient";
+import { calculateDistanceKm, resolveFarmCoordinates, calculateCarbonSavedKg } from "../../lib/geoUtils";
 
 export default function ProductDetail() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function ProductDetail() {
   const [createdOrderId, setCreatedOrderId] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [buyerLocation, setBuyerLocation] = useState(null);
 
   // Neighborhood Community Pooling State
   const [usePooling, setUsePooling] = useState(true);
@@ -41,6 +43,10 @@ export default function ProductDetail() {
       if (activePool) {
         const parsed = JSON.parse(activePool);
         setSelectedPoolName(`${parsed.name} (PIN: ${parsed.pincode})`);
+      }
+      const savedLoc = localStorage.getItem("harvest_user_location");
+      if (savedLoc) {
+        setBuyerLocation(JSON.parse(savedLoc));
       }
     } catch (e) {}
 
@@ -94,6 +100,15 @@ export default function ProductDetail() {
     const sum = reviews.reduce((acc, r) => acc + (r.rating || 0), 0);
     return (sum / reviews.length).toFixed(1);
   }, [reviews]);
+
+  const farmDistanceKm = useMemo(() => {
+    if (!product || !buyerLocation) return null;
+    const coords = resolveFarmCoordinates(
+      product.profiles?.location,
+      product.farmer_id || product.profiles?.farm_name
+    );
+    return calculateDistanceKm(buyerLocation.lat, buyerLocation.lng, coords.lat, coords.lng);
+  }, [product, buyerLocation]);
 
   const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
@@ -299,6 +314,33 @@ export default function ProductDetail() {
                 </button>
               </div>
             </div>
+
+            {/* GPS Distance & Carbon Footprint Badge */}
+            {farmDistanceKm != null && (
+              <div className="mt-5 p-3.5 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">📍</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-extrabold text-sm text-soil">
+                        Direct Farm Distance: {farmDistanceKm} km away
+                      </span>
+                      <span className="text-[10px] bg-emerald-700 text-white font-bold px-2 py-0.5 rounded-full">
+                        Local Harvest
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Calculated from {buyerLocation?.label || "your detected location"}
+                    </p>
+                  </div>
+                </div>
+                <div className="sm:text-right">
+                  <span className="inline-block text-xs font-bold text-emerald-800 bg-white/90 border border-emerald-200 px-2.5 py-1 rounded-xl shadow-xs">
+                    🌱 Saves ~{calculateCarbonSavedKg(farmDistanceKm)} kg CO₂ vs Supermarkets
+                  </span>
+                </div>
+              </div>
+            )}
 
             {product.description && (
               <div className="mt-6 pt-6 border-t border-gray-100">
