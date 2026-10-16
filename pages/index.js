@@ -216,13 +216,6 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="max-w-6xl mx-auto p-6 sm:p-8">
-        {/* Hyper-Local Farm Radar Map & Distance Finder */}
-        <FarmRadarMap
-          products={products}
-          userLocation={userLocation}
-          onLocationChange={handleLocationChange}
-        />
-
         {/* Filters and Sorting Controls */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-4 border-b border-gray-200">
           {/* Category Filter Pills */}
@@ -253,8 +246,15 @@ export default function Home() {
             })}
           </div>
 
-          {/* Sorting Dropdown */}
-          <div className="flex items-center gap-2 self-end sm:self-auto text-sm">
+          {/* Sorting Dropdown & Quick Map Anchor */}
+          <div className="flex items-center gap-2 self-end sm:self-auto text-sm flex-wrap justify-end">
+            <a
+              href="#farm-radar-map"
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-emerald-50 text-leaf border border-emerald-200 hover:bg-emerald-100 transition flex items-center gap-1 shadow-xs"
+            >
+              <span>🗺️</span>
+              <span>Farm Radar Map</span>
+            </a>
             <label className="text-gray-500 text-xs font-medium">{t("sort_label")}</label>
             <select
               value={sortBy}
@@ -443,7 +443,16 @@ export default function Home() {
           </div>
         )}
 
-        {/* Neighborhood Pooling / Group-Buying Innovation (Positioned Below Produce Catalog) */}
+        {/* Hyper-Local Farm Radar Map & Distance Finder (In Between Product Listings & Neighborhood Pooling) */}
+        <div id="farm-radar-map" className="mt-14 pt-10 border-t border-gray-200/80">
+          <FarmRadarMap
+            products={products}
+            userLocation={userLocation}
+            onLocationChange={handleLocationChange}
+          />
+        </div>
+
+        {/* Neighborhood Pooling / Group-Buying Innovation (Positioned Below Farm Radar Map) */}
         <div className="mt-14 pt-10 border-t border-gray-200/80">
           <CommunityPools />
         </div>
