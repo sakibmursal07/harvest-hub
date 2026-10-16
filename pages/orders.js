@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "../components/Navbar";
 import UpiPaymentModal from "../components/UpiPaymentModal";
 import ReviewModal from "../components/ReviewModal";
+import OrderInvoiceModal from "../components/OrderInvoiceModal";
 import { supabase } from "../lib/supabaseClient";
 
 export default function Orders() {
@@ -15,6 +16,7 @@ export default function Orders() {
   // Modals state
   const [upiModal, setUpiModal] = useState({ isOpen: false, order: null });
   const [reviewModal, setReviewModal] = useState({ isOpen: false, order: null });
+  const [invoiceModal, setInvoiceModal] = useState({ isOpen: false, order: null });
   const [reviewedOrders, setReviewedOrders] = useState({});
 
   useEffect(() => {
@@ -212,6 +214,15 @@ export default function Orders() {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={() => setInvoiceModal({ isOpen: true, order: o })}
+                        className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs border border-gray-200"
+                        title="View & Download Tax Invoice / Delivery Receipt"
+                      >
+                        <span>📄</span>
+                        <span>Invoice / Bill</span>
+                      </button>
+
                       {o.payment_method === "upi" && o.status !== "cancelled" && (
                         <button
                           onClick={() => setUpiModal({ isOpen: true, order: o })}
@@ -321,38 +332,49 @@ export default function Orders() {
                     )}
                   </div>
 
-                  {/* Farmer Action Buttons */}
-                  {o.status !== "delivered" && o.status !== "cancelled" && (
-                    <div className="flex flex-wrap gap-2 pt-3 justify-end items-center">
-                      <span className="text-xs text-gray-500 mr-auto">Update Order Status:</span>
-                      {o.status === "pending" && (
+                  {/* Farmer Action Buttons & Print Challan */}
+                  <div className="flex flex-wrap gap-2 pt-3 justify-end items-center">
+                    <button
+                      onClick={() => setInvoiceModal({ isOpen: true, order: o })}
+                      className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs border border-gray-200 mr-auto"
+                      title="Print Farmer Delivery Challan / Invoice"
+                    >
+                      <span>📄</span>
+                      <span>Challan / Bill</span>
+                    </button>
+
+                    {o.status !== "delivered" && o.status !== "cancelled" && (
+                      <>
+                        <span className="text-xs text-gray-500">Update Status:</span>
+                        {o.status === "pending" && (
+                          <button
+                            onClick={() => updateStatus(o.id, "confirmed")}
+                            className="text-xs bg-leaf hover:bg-emerald-800 text-white font-semibold px-4 py-2 rounded-lg transition"
+                          >
+                            ✓ Accept & Confirm Delivery
+                          </button>
+                        )}
+                        {o.status === "confirmed" && (
+                          <button
+                            onClick={() => updateStatus(o.id, "delivered")}
+                            className="text-xs bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-4 py-2 rounded-lg transition"
+                          >
+                            ✓ Mark as Delivered & Paid
+                          </button>
+                        )}
                         <button
-                          onClick={() => updateStatus(o.id, "confirmed")}
-                          className="text-xs bg-leaf hover:bg-emerald-800 text-white font-semibold px-4 py-2 rounded-lg transition"
+                          onClick={() => {
+                            if (confirm("Are you sure you want to cancel this order?")) {
+                              updateStatus(o.id, "cancelled");
+                            }
+                          }}
+                          className="text-xs border border-red-300 text-red-600 hover:bg-red-50 font-medium px-3.5 py-2 rounded-lg transition"
                         >
-                          ✓ Accept & Confirm Delivery
+                          Cancel Order
                         </button>
-                      )}
-                      {o.status === "confirmed" && (
-                        <button
-                          onClick={() => updateStatus(o.id, "delivered")}
-                          className="text-xs bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-4 py-2 rounded-lg transition"
-                        >
-                          ✓ Mark as Delivered & Paid
-                        </button>
-                      )}
-                      <button
-                        onClick={() => {
-                          if (confirm("Are you sure you want to cancel this order?")) {
-                            updateStatus(o.id, "cancelled");
-                          }
-                        }}
-                        className="text-xs border border-red-300 text-red-600 hover:bg-red-50 font-medium px-3.5 py-2 rounded-lg transition"
-                      >
-                        Cancel Order
-                      </button>
-                    </div>
-                  )}
+                      </>
+                    )}
+                  </div>
                 </div>
               ))
             )}
@@ -376,6 +398,13 @@ export default function Orders() {
           onClose={() => setReviewModal({ isOpen: false, order: null })}
           order={reviewModal.order}
           onSubmitted={handleReviewSubmitted}
+        />
+
+        {/* Farm-to-Table Tax Invoice & Delivery Challan Modal */}
+        <OrderInvoiceModal
+          isOpen={invoiceModal.isOpen}
+          onClose={() => setInvoiceModal({ isOpen: false, order: null })}
+          order={invoiceModal.order}
         />
       </main>
     </div>

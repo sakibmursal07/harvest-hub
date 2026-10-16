@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { resolveFarmCoordinates, calculateDistanceKm, calculateCarbonSavedKg, KNOWN_HUBS } from "../lib/geoUtils";
 
-export default function FarmRadarMap({ products = [], userLocation, onLocationChange }) {
+export default function FarmRadarMap({ products = [], userLocation, onLocationChange, onFilterByFarm }) {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersLayerRef = useRef(null);
@@ -324,18 +324,23 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
 
       {/* Selected Farm Detail Drawer */}
       {selectedFarm && (
-        <div className="mt-4 p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn">
+        <div className="mt-4 p-4 bg-emerald-50/80 border border-emerald-300 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn shadow-xs">
           <div>
-            <div className="flex items-center gap-2">
-              <h4 className="font-extrabold text-sm text-soil">🌾 {selectedFarm.farmName}</h4>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 className="font-extrabold text-sm sm:text-base text-soil">🌾 {selectedFarm.farmName}</h4>
               {selectedFarm.distanceKm && (
-                <span className="text-xs bg-emerald-700 text-white font-bold px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-emerald-700 text-white font-bold px-2.5 py-0.5 rounded-full">
                   📍 {selectedFarm.distanceKm} km away
                 </span>
               )}
+              {selectedFarm.verified && (
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full">
+                  ✓ Verified Farm
+                </span>
+              )}
             </div>
-            <p className="text-xs text-gray-600 mt-0.5">
-              📍 {selectedFarm.locationText} · {selectedFarm.products.length} product(s) available
+            <p className="text-xs text-gray-600 mt-1">
+              📍 {selectedFarm.locationText} · <strong>{selectedFarm.products.length} product(s)</strong> available for direct order
             </p>
             {selectedFarm.distanceKm && (
               <p className="text-[11px] text-emerald-800 font-semibold mt-1">
@@ -343,12 +348,28 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
               </p>
             )}
           </div>
-          <button
-            onClick={() => setSelectedFarm(null)}
-            className="text-xs text-gray-500 hover:text-gray-800 font-semibold underline px-2 py-1"
-          >
-            Close
-          </button>
+          <div className="flex items-center gap-2.5 self-end sm:self-auto flex-wrap">
+            {onFilterByFarm && (
+              <button
+                type="button"
+                onClick={() => {
+                  onFilterByFarm(selectedFarm);
+                  const el = document.getElementById("produce-catalog");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="text-xs bg-leaf hover:bg-emerald-800 text-white font-bold px-3.5 py-2 rounded-xl transition shadow-xs flex items-center gap-1.5 active:scale-95"
+              >
+                <span>🔍</span>
+                <span>View This Farm's Produce ({selectedFarm.products.length}) ↑</span>
+              </button>
+            )}
+            <button
+              onClick={() => setSelectedFarm(null)}
+              className="text-xs text-gray-500 hover:text-gray-800 font-semibold underline px-2 py-1"
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
 

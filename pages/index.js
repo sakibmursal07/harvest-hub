@@ -29,6 +29,7 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("newest");
   const [userLocation, setUserLocation] = useState(null);
+  const [selectedFarmFilter, setSelectedFarmFilter] = useState(null);
 
   useEffect(() => {
     try {
@@ -128,15 +129,24 @@ export default function Home() {
           selectedCategory === "All" ||
           p.category?.toLowerCase() === selectedCategory.toLowerCase();
 
+        const matchesFarmFilter =
+          !selectedFarmFilter ||
+          p.farmer_id === selectedFarmFilter.farmId ||
+          p.profiles?.farm_name === selectedFarmFilter.farmName;
+
         const query = searchQuery.trim().toLowerCase();
-        if (!query) return matchesCategory;
+        if (!query) return matchesCategory && matchesFarmFilter;
 
         const matchesName = p.name?.toLowerCase().includes(query);
         const matchesFarm = p.profiles?.farm_name?.toLowerCase().includes(query);
         const matchesLocation = p.profiles?.location?.toLowerCase().includes(query);
         const matchesDesc = p.description?.toLowerCase().includes(query);
 
-        return matchesCategory && (matchesName || matchesFarm || matchesLocation || matchesDesc);
+        return (
+          matchesCategory &&
+          matchesFarmFilter &&
+          (matchesName || matchesFarm || matchesLocation || matchesDesc)
+        );
       })
       .sort((a, b) => {
         if (sortBy === "nearest" && userLocation) {
@@ -153,7 +163,7 @@ export default function Home() {
         }
         return new Date(b.created_at) - new Date(a.created_at);
       });
-  }, [products, searchQuery, selectedCategory, sortBy, productRatings, userLocation]);
+  }, [products, searchQuery, selectedCategory, sortBy, productRatings, userLocation, selectedFarmFilter]);
 
   // Counts by category
   const categoryCounts = useMemo(() => {
@@ -217,7 +227,7 @@ export default function Home() {
       {/* Main Content Area */}
       <main className="max-w-6xl mx-auto p-6 sm:p-8">
         {/* Filters and Sorting Controls */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-4 border-b border-gray-200">
+        <div id="produce-catalog" className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-200 scroll-mt-20">
           {/* Category Filter Pills */}
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((cat) => {
@@ -272,6 +282,40 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Active Farm Filter Alert */}
+        {selectedFarmFilter && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn shadow-xs">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🌾</span>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[11px] bg-leaf text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    Farm Filter Active
+                  </span>
+                  <span className="font-extrabold text-soil text-sm sm:text-base">
+                    {selectedFarmFilter.farmName}
+                  </span>
+                  {selectedFarmFilter.distanceKm && (
+                    <span className="text-xs font-bold text-emerald-800 bg-white/90 border border-emerald-200 px-2 py-0.5 rounded-full">
+                      📍 {selectedFarmFilter.distanceKm} km away
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-gray-600 mt-0.5">
+                  Showing harvest direct from <strong>{selectedFarmFilter.locationText}</strong>
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setSelectedFarmFilter(null)}
+              className="px-3 py-1.5 rounded-xl bg-white hover:bg-gray-100 text-gray-800 font-bold text-xs border border-gray-300 shadow-2xs transition flex items-center gap-1.5 self-start sm:self-auto"
+            >
+              <span>✕</span>
+              <span>Show All Farms</span>
+            </button>
+          </div>
+        )}
+
         {/* Loading Skeletons */}
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -302,11 +346,12 @@ export default function Home() {
                 ? "No products matched your search or category filter. Try clearing filters or searching for something else."
                 : "No products are listed right now. Are you a local farmer? Join Harvest Hub and list your harvest!"}
             </p>
-            {(searchQuery || selectedCategory !== "All") && (
+            {(searchQuery || selectedCategory !== "All" || selectedFarmFilter) && (
               <button
                 onClick={() => {
                   setSearchQuery("");
                   setSelectedCategory("All");
+                  setSelectedFarmFilter(null);
                 }}
                 className="bg-leaf hover:bg-emerald-800 text-white font-semibold px-5 py-2.5 rounded-xl transition text-sm"
               >
@@ -449,6 +494,7 @@ export default function Home() {
             products={products}
             userLocation={userLocation}
             onLocationChange={handleLocationChange}
+            onFilterByFarm={setSelectedFarmFilter}
           />
         </div>
 
