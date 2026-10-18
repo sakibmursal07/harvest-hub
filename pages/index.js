@@ -177,7 +177,7 @@ export default function Home() {
   }, [products]);
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] text-soil">
+    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#14110e] text-soil dark:text-[#f3eee6] transition-colors duration-200">
       <Head>
         <title>Harvest Hub | Farm Fresh Produce Directly From Local Farmers</title>
         <meta
@@ -190,7 +190,7 @@ export default function Home() {
       <WelcomeModal />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-soil to-[#3d3223] text-white py-12 px-6 shadow-inner">
+      <section className="bg-gradient-to-b from-soil to-[#3d3223] dark:from-[#18140f] dark:to-[#120f0b] text-white py-12 px-6 shadow-inner">
         <div className="max-w-5xl mx-auto text-center">
           <span className="inline-block bg-leaf/40 border border-leaf text-emerald-200 text-xs uppercase tracking-widest px-3 py-1 rounded-full font-semibold mb-3">
             {t("hero_tag")}
@@ -209,13 +209,13 @@ export default function Home() {
               placeholder={t("search_placeholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white text-gray-900 rounded-2xl py-3.5 pl-12 pr-10 text-sm sm:text-base shadow-xl focus:outline-none focus:ring-2 focus:ring-leaf transition"
+              className="w-full bg-white dark:bg-[#1e1913] text-gray-900 dark:text-gray-100 rounded-2xl py-3.5 pl-12 pr-10 text-sm sm:text-base shadow-xl focus:outline-none focus:ring-2 focus:ring-leaf transition border border-transparent dark:border-stone-700"
             />
             <span className="absolute left-4 top-3.5 text-gray-400 text-lg">🔍</span>
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 text-sm font-bold"
+                className="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm font-bold"
               >
                 ✕
               </button>
@@ -227,7 +227,7 @@ export default function Home() {
       {/* Main Content Area */}
       <main className="max-w-6xl mx-auto p-6 sm:p-8">
         {/* Filters and Sorting Controls */}
-        <div id="produce-catalog" className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-200 scroll-mt-20">
+        <div id="produce-catalog" className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-200 dark:border-stone-800 scroll-mt-20">
           {/* Category Filter Pills */}
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((cat) => {
@@ -240,13 +240,13 @@ export default function Home() {
                   className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 ${
                     isActive
                       ? "bg-leaf text-white shadow-sm"
-                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
+                      : "bg-white dark:bg-[#1e1913] text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-stone-800 border border-gray-200 dark:border-stone-700"
                   }`}
                 >
                   <span>{categoryNames[cat] || cat}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                      isActive ? "bg-white/20 text-white" : "bg-gray-100 dark:bg-stone-800 text-gray-600 dark:text-gray-300"
                     }`}
                   >
                     {count}
@@ -260,16 +260,16 @@ export default function Home() {
           <div className="flex items-center gap-2 self-end sm:self-auto text-sm flex-wrap justify-end">
             <a
               href="#farm-radar-map"
-              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-emerald-50 text-leaf border border-emerald-200 hover:bg-emerald-100 transition flex items-center gap-1 shadow-xs"
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-leaf dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition flex items-center gap-1 shadow-xs"
             >
               <span>🗺️</span>
               <span>Farm Radar Map</span>
             </a>
-            <label className="text-gray-500 text-xs font-medium">{t("sort_label")}</label>
+            <label className="text-gray-500 dark:text-stone-400 text-xs font-medium">{t("sort_label")}</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-medium focus:outline-none focus:border-leaf"
+              className="bg-white dark:bg-[#1e1913] text-gray-900 dark:text-stone-100 border border-gray-200 dark:border-stone-700 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-medium focus:outline-none focus:border-leaf"
             >
               {userLocation && (
                 <option value="nearest">{t("sort_nearest")}</option>
@@ -284,7 +284,7 @@ export default function Home() {
 
         {/* Active Farm Filter Alert */}
         {selectedFarmFilter && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn shadow-xs">
+          <div className="mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/30 border-2 border-emerald-300 dark:border-emerald-700 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn shadow-xs">
             <div className="flex items-center gap-3">
               <span className="text-2xl">🌾</span>
               <div>
@@ -292,23 +292,23 @@ export default function Home() {
                   <span className="text-[11px] bg-leaf text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                     Farm Filter Active
                   </span>
-                  <span className="font-extrabold text-soil text-sm sm:text-base">
+                  <span className="font-extrabold text-soil dark:text-stone-100 text-sm sm:text-base">
                     {selectedFarmFilter.farmName}
                   </span>
                   {selectedFarmFilter.distanceKm && (
-                    <span className="text-xs font-bold text-emerald-800 bg-white/90 border border-emerald-200 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-white/90 dark:bg-stone-900/90 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-full">
                       📍 {selectedFarmFilter.distanceKm} km away
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-gray-600 mt-0.5">
+                <p className="text-xs text-gray-600 dark:text-stone-300 mt-0.5">
                   Showing harvest direct from <strong>{selectedFarmFilter.locationText}</strong>
                 </p>
               </div>
             </div>
             <button
               onClick={() => setSelectedFarmFilter(null)}
-              className="px-3 py-1.5 rounded-xl bg-white hover:bg-gray-100 text-gray-800 font-bold text-xs border border-gray-300 shadow-2xs transition flex items-center gap-1.5 self-start sm:self-auto"
+              className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#1e1913] hover:bg-gray-100 dark:hover:bg-stone-800 text-gray-800 dark:text-stone-200 font-bold text-xs border border-gray-300 dark:border-stone-700 shadow-2xs transition flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
             >
               <span>✕</span>
               <span>Show All Farms</span>
@@ -322,14 +322,14 @@ export default function Home() {
             {[1, 2, 3, 4, 5, 6].map((n) => (
               <div
                 key={n}
-                className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm animate-pulse"
+                className="bg-white dark:bg-[#1e1913] border border-gray-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm animate-pulse"
               >
-                <div className="w-full h-44 bg-gray-200" />
+                <div className="w-full h-44 bg-gray-200 dark:bg-stone-800" />
                 <div className="p-5 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-1/3" />
-                  <div className="h-6 bg-gray-200 rounded w-3/4" />
-                  <div className="h-4 bg-gray-200 rounded w-1/2" />
-                  <div className="h-5 bg-gray-200 rounded w-1/4 pt-2" />
+                  <div className="h-4 bg-gray-200 dark:bg-stone-800 rounded w-1/3" />
+                  <div className="h-6 bg-gray-200 dark:bg-stone-800 rounded w-3/4" />
+                  <div className="h-4 bg-gray-200 dark:bg-stone-800 rounded w-1/2" />
+                  <div className="h-5 bg-gray-200 dark:bg-stone-800 rounded w-1/4 pt-2" />
                 </div>
               </div>
             ))}
@@ -338,10 +338,10 @@ export default function Home() {
 
         {/* Empty State */}
         {!loading && filteredProducts.length === 0 && (
-          <div className="text-center py-16 bg-white border border-dashed border-gray-300 rounded-2xl p-8">
+          <div className="text-center py-16 bg-white dark:bg-[#1e1913] border border-dashed border-gray-300 dark:border-stone-700 rounded-2xl p-8">
             <div className="text-5xl mb-4">🌾</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No produce found</h3>
-            <p className="text-gray-500 text-sm max-w-md mx-auto mb-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-stone-100 mb-2">No produce found</h3>
+            <p className="text-gray-500 dark:text-stone-400 text-sm max-w-md mx-auto mb-6">
               {searchQuery || selectedCategory !== "All"
                 ? "No products matched your search or category filter. Try clearing filters or searching for something else."
                 : "No products are listed right now. Are you a local farmer? Join Harvest Hub and list your harvest!"}
@@ -353,7 +353,7 @@ export default function Home() {
                   setSelectedCategory("All");
                   setSelectedFarmFilter(null);
                 }}
-                className="bg-leaf hover:bg-emerald-800 text-white font-semibold px-5 py-2.5 rounded-xl transition text-sm"
+                className="bg-leaf hover:bg-emerald-800 text-white font-semibold px-5 py-2.5 rounded-xl transition text-sm cursor-pointer"
               >
                 Reset All Filters
               </button>
@@ -370,9 +370,9 @@ export default function Home() {
                 <Link
                   key={p.id}
                   href={`/product/${p.id}`}
-                  className="group block bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  className="group block bg-white dark:bg-[#1e1913] border border-gray-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl dark:hover:border-emerald-700/60 transition-all duration-300 transform hover:-translate-y-1"
                 >
-                  <div className="relative overflow-hidden bg-emerald-50/50">
+                  <div className="relative overflow-hidden bg-emerald-50/50 dark:bg-emerald-950/20">
                     {p.image_url ? (
                       <img
                         src={p.image_url}
@@ -380,22 +380,22 @@ export default function Home() {
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-48 bg-gradient-to-br from-emerald-50 to-emerald-100 flex flex-col items-center justify-center text-4xl text-emerald-700">
+                      <div className="w-full h-48 bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/40 dark:to-emerald-900/30 flex flex-col items-center justify-center text-4xl text-emerald-700 dark:text-emerald-400">
                         <span>🌾</span>
-                        <span className="text-xs font-semibold text-emerald-800 mt-1 uppercase tracking-wide">
+                        <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 mt-1 uppercase tracking-wide">
                           {p.category}
                         </span>
                       </div>
                     )}
 
                     {/* Category Tag */}
-                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-soil font-semibold text-xs px-2.5 py-1 rounded-full shadow-xs">
+                    <span className="absolute top-3 left-3 bg-white/90 dark:bg-stone-900/90 text-soil dark:text-stone-200 font-semibold text-xs px-2.5 py-1 rounded-full shadow-xs backdrop-blur-xs">
                       {p.category}
                     </span>
 
                     {/* Distance Badge on Image if userLocation is active */}
                     {p.calculatedDistance != null && (
-                      <span className="absolute bottom-3 left-3 bg-soil/90 backdrop-blur-sm text-white font-bold text-[11px] px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 border border-white/20">
+                      <span className="absolute bottom-3 left-3 bg-soil/90 dark:bg-black/85 backdrop-blur-sm text-white font-bold text-[11px] px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 border border-white/20">
                         <span>📍</span>
                         <span>{p.calculatedDistance} km away</span>
                       </span>
@@ -405,8 +405,8 @@ export default function Home() {
                     <span
                       className={`absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full shadow-xs ${
                         isOutOfStock
-                          ? "bg-red-100 text-red-700"
-                          : "bg-emerald-100 text-emerald-800"
+                          ? "bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300"
+                          : "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300"
                       }`}
                     >
                       {isOutOfStock ? t("sold_out") : `${p.quantity_available} ${p.unit} ${t("in_stock")}`}
@@ -414,13 +414,13 @@ export default function Home() {
                   </div>
 
                   <div className="p-5">
-                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-leaf transition">
+                    <h3 className="font-bold text-lg text-gray-900 dark:text-stone-100 group-hover:text-leaf dark:group-hover:text-emerald-400 transition">
                       {p.name}
                     </h3>
 
                     {/* Farmer, Verification & Location */}
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-1 flex-wrap">
-                      <span className="font-medium text-gray-700 truncate">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-stone-400 mt-1 flex-wrap">
+                      <span className="font-medium text-gray-700 dark:text-stone-300 truncate">
                         {p.profiles?.farm_name || "Local Farmer"}
                       </span>
                       {p.profiles?.location && (
@@ -430,12 +430,12 @@ export default function Home() {
                         </>
                       )}
                       {p.profiles?.verified && (
-                        <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-1.5 py-0.2 rounded-full shrink-0">
+                        <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold px-1.5 py-0.2 rounded-full shrink-0">
                           ✓
                         </span>
                       )}
                       {p.calculatedDistance != null && (
-                        <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full shrink-0">
+                        <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 px-2 py-0.5 rounded-full shrink-0">
                           📍 {p.calculatedDistance} km
                         </span>
                       )}
@@ -444,38 +444,38 @@ export default function Home() {
                     {/* Rating Pill & UPI Badge */}
                     <div className="flex items-center justify-between text-xs mt-2.5">
                       {productRatings[p.id] ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full shrink-0">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-2 py-0.5 rounded-full shrink-0">
                           ★ {productRatings[p.id].avg}
-                          <span className="text-gray-400 font-normal">({productRatings[p.id].count})</span>
+                          <span className="text-gray-400 dark:text-stone-400 font-normal">({productRatings[p.id].count})</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">
+                        <span className="inline-flex items-center text-[10px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full shrink-0">
                           {t("fresh_harvest")}
                         </span>
                       )}
 
                       {p.profiles?.upi_id && (
-                        <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-full">
+                        <span className="text-[10px] font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-800/60 px-2 py-0.5 rounded-full">
                           💳 UPI
                         </span>
                       )}
                     </div>
 
                     {/* Price and CTA */}
-                    <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                    <div className="mt-4 pt-3 border-t border-gray-100 dark:border-stone-800 flex items-center justify-between">
                       <div>
-                        <span className="text-xs text-gray-400 block">{t("price_label")}</span>
-                        <p className="text-xl font-extrabold text-leaf">
+                        <span className="text-xs text-gray-400 dark:text-stone-400 block">{t("price_label")}</span>
+                        <p className="text-xl font-extrabold text-leaf dark:text-emerald-400">
                           ₹{p.price}
-                          <span className="text-xs font-normal text-gray-500"> / {p.unit}</span>
+                          <span className="text-xs font-normal text-gray-500 dark:text-stone-400"> / {p.unit}</span>
                         </p>
                       </div>
 
                       <span
                         className={`text-xs font-semibold px-3.5 py-1.5 rounded-lg transition ${
                           isOutOfStock
-                            ? "bg-gray-100 text-gray-400"
-                            : "bg-emerald-50 text-leaf group-hover:bg-leaf group-hover:text-white"
+                            ? "bg-gray-100 dark:bg-stone-800 text-gray-400 dark:text-stone-500"
+                            : "bg-emerald-50 dark:bg-emerald-950/50 text-leaf dark:text-emerald-300 group-hover:bg-leaf group-hover:text-white"
                         }`}
                       >
                         {isOutOfStock ? t("sold_out") : t("btn_buy_direct")}
@@ -489,7 +489,7 @@ export default function Home() {
         )}
 
         {/* Hyper-Local Farm Radar Map & Distance Finder (In Between Product Listings & Neighborhood Pooling) */}
-        <div id="farm-radar-map" className="mt-14 pt-10 border-t border-gray-200/80">
+        <div id="farm-radar-map" className="mt-14 pt-10 border-t border-gray-200/80 dark:border-stone-800">
           <FarmRadarMap
             products={products}
             userLocation={userLocation}
@@ -499,7 +499,7 @@ export default function Home() {
         </div>
 
         {/* Neighborhood Pooling / Group-Buying Innovation (Positioned Below Farm Radar Map) */}
-        <div className="mt-14 pt-10 border-t border-gray-200/80">
+        <div className="mt-14 pt-10 border-t border-gray-200/80 dark:border-stone-800">
           <CommunityPools />
         </div>
       </main>

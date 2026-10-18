@@ -91,22 +91,22 @@ export default function AddProduct() {
     <div>
       <Navbar />
       <main className="max-w-md mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-5">Add a Product</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <h1 className="text-2xl font-bold mb-5 text-gray-900 dark:text-stone-100">Add a Product</h1>
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white dark:bg-[#1e1913] p-6 rounded-2xl border border-gray-200 dark:border-stone-800 shadow-sm">
           <div>
-            <label className="block text-sm font-medium mb-1">Product photo</label>
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-stone-300">Product photo</label>
             {preview && (
-              <img src={preview} alt="Preview" className="w-full h-40 object-cover rounded mb-2 border" />
+              <img src={preview} alt="Preview" className="w-full h-40 object-cover rounded-xl mb-2 border border-gray-200 dark:border-stone-700" />
             )}
-            <input type="file" accept="image/*" onChange={handleImageChange} className="w-full text-sm" />
+            <input type="file" accept="image/*" onChange={handleImageChange} className="w-full text-sm text-gray-700 dark:text-stone-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-100 dark:file:bg-emerald-950/60 file:text-emerald-800 dark:file:text-emerald-300 hover:file:bg-emerald-200" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Product name</label>
-            <input name="name" required onChange={handleChange} className="w-full border rounded px-3 py-2" />
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-stone-300">Product name</label>
+            <input name="name" required onChange={handleChange} className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-leaf" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Category</label>
-            <select name="category" onChange={handleChange} value={form.category} className="w-full border rounded px-3 py-2">
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-stone-300">Category</label>
+            <select name="category" onChange={handleChange} value={form.category} className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-leaf">
               <option>Vegetable</option>
               <option>Fruit</option>
               <option>Dairy</option>
@@ -116,7 +116,7 @@ export default function AddProduct() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium">Price (₹)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-stone-300">Price (₹)</label>
                 <button
                   type="button"
                   onClick={() => {
@@ -126,7 +126,7 @@ export default function AddProduct() {
                       })
                     );
                   }}
-                  className="text-[11px] text-emerald-800 hover:text-emerald-950 bg-emerald-100 hover:bg-emerald-200 px-2 py-0.5 rounded-md font-bold transition flex items-center gap-1 shadow-xs"
+                  className="text-[11px] text-emerald-800 dark:text-emerald-300 hover:text-emerald-950 bg-emerald-100 dark:bg-emerald-950/60 hover:bg-emerald-200 dark:hover:bg-emerald-900/60 border border-transparent dark:border-emerald-800/40 px-2 py-0.5 rounded-md font-bold transition flex items-center gap-1 shadow-xs"
                   title="Calculate fair market benchmark price with AI"
                 >
                   <span>✨</span>
@@ -141,12 +141,12 @@ export default function AddProduct() {
                 required
                 onChange={handleChange}
                 placeholder="₹ Amount"
-                className="w-full border rounded px-3 py-2 text-sm"
+                className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-leaf"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Unit</label>
-              <select name="unit" onChange={handleChange} value={form.unit} className="w-full border rounded px-3 py-2 text-sm">
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-stone-300">Unit</label>
+              <select name="unit" onChange={handleChange} value={form.unit} className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-leaf">
                 <option value="kg">kg</option>
                 <option value="dozen">dozen</option>
                 <option value="bunch">bunch</option>
@@ -155,15 +155,15 @@ export default function AddProduct() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Quantity available</label>
-            <input type="number" name="quantity_available" required onChange={handleChange} className="w-full border rounded px-3 py-2" />
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-stone-300">Quantity available</label>
+            <input type="number" name="quantity_available" required onChange={handleChange} className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-leaf" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
-            <textarea name="description" rows={3} onChange={handleChange} className="w-full border rounded px-3 py-2" />
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-stone-300">Description</label>
+            <textarea name="description" rows={3} onChange={handleChange} className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-leaf" />
           </div>
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-          <button disabled={loading} className="w-full bg-leaf text-white font-semibold py-2.5 rounded">
+          {error && <p className="text-red-600 dark:text-red-400 text-sm bg-red-50 dark:bg-red-950/30 p-2.5 rounded-xl border border-red-200 dark:border-red-900/50">{error}</p>}
+          <button disabled={loading} className="w-full bg-leaf hover:bg-emerald-800 transition text-white font-semibold py-2.5 rounded-xl text-sm shadow-sm">
             {loading ? "Saving..." : "List Product"}
           </button>
         </form>

@@ -72,7 +72,7 @@ export default function WelcomeModal() {
       }}
     >
       <div
-        className={`relative w-full max-w-xl bg-[#FAF7F2] rounded-3xl shadow-2xl border border-[#3d3223]/20 overflow-hidden transform ${
+        className={`relative w-full max-w-xl bg-[#FAF7F2] dark:bg-[#1c1712] rounded-3xl shadow-2xl border border-[#3d3223]/20 dark:border-stone-800 overflow-hidden transform ${
           isClosing ? "animate-modal-out" : "animate-modal-in"
         }`}
       >
@@ -110,66 +110,66 @@ export default function WelcomeModal() {
 
         {/* Start Window Body */}
         <div className="p-6 sm:p-8 space-y-5">
-          <p className="text-gray-700 text-xs sm:text-sm text-center leading-relaxed font-normal">
+          <p className="text-gray-700 dark:text-stone-300 text-xs sm:text-sm text-center leading-relaxed font-normal">
             {t("welcome_desc")}
           </p>
 
           {/* 3 Core Pillars with Interactive Hover Animations */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-            <div className="p-3.5 bg-white rounded-2xl border border-gray-200/90 shadow-xs flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md hover:border-emerald-500/50 group cursor-default">
+            <div className="p-3.5 bg-white dark:bg-[#251e17] rounded-2xl border border-gray-200/90 dark:border-stone-800 shadow-xs flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md hover:border-emerald-500/50 group cursor-default">
               <span className="text-2xl mb-1 inline-block group-hover:scale-125 transition-transform duration-200">
                 🚜
               </span>
-              <h4 className="text-xs font-bold text-soil group-hover:text-emerald-800 transition-colors">
+              <h4 className="text-xs font-bold text-soil dark:text-stone-100 group-hover:text-emerald-800 dark:group-hover:text-emerald-400 transition-colors">
                 {t("welcome_p1_title")}
               </h4>
-              <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">
+              <p className="text-[11px] text-gray-500 dark:text-stone-400 mt-0.5 leading-snug">
                 {t("welcome_p1_desc")}
               </p>
             </div>
 
-            <div className="p-3.5 bg-white rounded-2xl border border-gray-200/90 shadow-xs flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md hover:border-emerald-500/50 group cursor-default">
+            <div className="p-3.5 bg-white dark:bg-[#251e17] rounded-2xl border border-gray-200/90 dark:border-stone-800 shadow-xs flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md hover:border-emerald-500/50 group cursor-default">
               <span className="text-2xl mb-1 inline-block group-hover:scale-125 transition-transform duration-200">
                 🌱
               </span>
-              <h4 className="text-xs font-bold text-soil group-hover:text-emerald-800 transition-colors">
+              <h4 className="text-xs font-bold text-soil dark:text-stone-100 group-hover:text-emerald-800 dark:group-hover:text-emerald-400 transition-colors">
                 {t("welcome_p2_title")}
               </h4>
-              <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">
+              <p className="text-[11px] text-gray-500 dark:text-stone-400 mt-0.5 leading-snug">
                 {t("welcome_p2_desc")}
               </p>
             </div>
 
-            <div className="p-3.5 bg-white rounded-2xl border border-gray-200/90 shadow-xs flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md hover:border-emerald-500/50 group cursor-default">
+            <div className="p-3.5 bg-white dark:bg-[#251e17] rounded-2xl border border-gray-200/90 dark:border-stone-800 shadow-xs flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md hover:border-emerald-500/50 group cursor-default">
               <span className="text-2xl mb-1 inline-block group-hover:scale-125 transition-transform duration-200">
                 🌍
               </span>
-              <h4 className="text-xs font-bold text-soil group-hover:text-emerald-800 transition-colors">
+              <h4 className="text-xs font-bold text-soil dark:text-stone-100 group-hover:text-emerald-800 dark:group-hover:text-emerald-400 transition-colors">
                 {t("welcome_p3_title")}
               </h4>
-              <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">
+              <p className="text-[11px] text-gray-500 dark:text-stone-400 mt-0.5 leading-snug">
                 {t("welcome_p3_desc")}
               </p>
             </div>
           </div>
 
           {/* Quick Guidance / Role Selection */}
-          <div className="bg-emerald-50/80 border border-emerald-200/70 rounded-xl p-3 flex items-center justify-between gap-2 text-xs transition-all hover:bg-emerald-50">
-            <div className="flex items-center gap-2 text-emerald-950 font-medium">
+          <div className="bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/70 dark:border-emerald-800/80 rounded-xl p-3 flex items-center justify-between gap-2 text-xs transition-all hover:bg-emerald-50 dark:hover:bg-emerald-950/60">
+            <div className="flex items-center gap-2 text-emerald-950 dark:text-emerald-200 font-medium">
               <span className="text-base animate-bounce">👩‍🌾</span>
               <span>{t("welcome_farmer_q")}</span>
             </div>
             <Link
               href="/signup"
               onClick={handleDismiss}
-              className="text-leaf font-bold hover:underline hover:text-emerald-800 whitespace-nowrap"
+              className="text-leaf font-bold hover:underline hover:text-emerald-800 dark:hover:text-emerald-300 whitespace-nowrap"
             >
               {t("welcome_farmer_link")}
             </Link>
           </div>
 
           {/* Actions: Enter or Skip */}
-          <div className="pt-2 border-t border-gray-200/70 flex flex-col sm:flex-row items-center gap-2.5">
+          <div className="pt-2 border-t border-gray-200/70 dark:border-stone-800 flex flex-col sm:flex-row items-center gap-2.5">
             <button
               type="button"
               onClick={handleDismiss}
@@ -184,7 +184,7 @@ export default function WelcomeModal() {
             <button
               type="button"
               onClick={handleDismiss}
-              className="w-full sm:w-auto py-3 px-6 rounded-xl border border-gray-300 bg-white hover:bg-gray-100 hover:text-gray-900 text-gray-700 font-semibold text-sm transition-all duration-200 active:scale-95 focus:outline-none shadow-xs"
+              className="w-full sm:w-auto py-3 px-6 rounded-xl border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#251e17] hover:bg-gray-100 dark:hover:bg-stone-800 hover:text-gray-900 dark:hover:text-stone-100 text-gray-700 dark:text-stone-300 font-semibold text-sm transition-all duration-200 active:scale-95 focus:outline-none shadow-xs"
             >
               {t("welcome_skip")}
             </button>

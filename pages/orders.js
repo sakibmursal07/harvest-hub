@@ -94,15 +94,15 @@ export default function Orders() {
   const getStatusBadge = (status) => {
     switch (status) {
       case "pending":
-        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">⏳ Pending Confirmation</span>;
+        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-transparent dark:border-amber-800/40">⏳ Pending Confirmation</span>;
       case "confirmed":
-        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800">🚚 Out for Delivery</span>;
+        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-transparent dark:border-blue-800/40">🚚 Out for Delivery</span>;
       case "delivered":
-        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">✓ Delivered</span>;
+        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-transparent dark:border-emerald-800/40">✓ Delivered</span>;
       case "cancelled":
-        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-800">✕ Cancelled</span>;
+        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300 border border-transparent dark:border-red-800/40">✕ Cancelled</span>;
       default:
-        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-700">{status}</span>;
+        return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 dark:bg-stone-800 text-gray-700 dark:text-stone-300">{status}</span>;
     }
   };
 
@@ -112,19 +112,19 @@ export default function Orders() {
       <main className="max-w-4xl mx-auto p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
-            <p className="text-sm text-gray-500 mt-1">Track your fresh produce purchases and farm deliveries.</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-stone-100">Order Management</h1>
+            <p className="text-sm text-gray-500 dark:text-stone-400 mt-1">Track your fresh produce purchases and farm deliveries.</p>
           </div>
 
           {/* Dual Tabs */}
           {(userRole === "farmer" || userRole === "admin" || receivedOrders.length > 0) && (
-            <div className="flex bg-gray-100 p-1 rounded-xl">
+            <div className="flex bg-gray-100 dark:bg-[#1e1913] p-1 rounded-xl border border-transparent dark:border-stone-800">
               <button
                 onClick={() => setActiveTab("purchases")}
                 className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition ${
                   activeTab === "purchases"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "bg-white dark:bg-stone-800 text-gray-900 dark:text-stone-100 shadow-sm"
+                    : "text-gray-600 dark:text-stone-400 hover:text-gray-900 dark:hover:text-stone-100"
                 }`}
               >
                 My Purchases ({myPurchases.length})
@@ -133,8 +133,8 @@ export default function Orders() {
                 onClick={() => setActiveTab("sales")}
                 className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition ${
                   activeTab === "sales"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "bg-white dark:bg-stone-800 text-gray-900 dark:text-stone-100 shadow-sm"
+                    : "text-gray-600 dark:text-stone-400 hover:text-gray-900 dark:hover:text-stone-100"
                 }`}
               >
                 Farm Deliveries ({receivedOrders.length})
@@ -145,14 +145,14 @@ export default function Orders() {
 
         {loading && (
           <div className="space-y-4 animate-pulse">
-            <div className="h-24 bg-gray-200 rounded-xl" />
-            <div className="h-24 bg-gray-200 rounded-xl" />
+            <div className="h-24 bg-gray-200 dark:bg-stone-800 rounded-xl" />
+            <div className="h-24 bg-gray-200 dark:bg-stone-800 rounded-xl" />
           </div>
         )}
 
         {!loading && !userId && (
-          <div className="text-center py-16 bg-white border rounded-2xl p-6">
-            <p className="text-gray-600 mb-4">Please log in to see your orders and delivery history.</p>
+          <div className="text-center py-16 bg-white dark:bg-[#1c1712] border border-gray-200 dark:border-stone-800 rounded-2xl p-6">
+            <p className="text-gray-600 dark:text-stone-300 mb-4">Please log in to see your orders and delivery history.</p>
             <Link href="/login" className="bg-leaf text-white font-semibold px-6 py-2.5 rounded-xl">
               Log in to Harvest Hub
             </Link>
@@ -163,23 +163,23 @@ export default function Orders() {
         {!loading && userId && activeTab === "purchases" && (
           <div className="space-y-4">
             {myPurchases.length === 0 ? (
-              <div className="text-center py-16 bg-white border border-dashed rounded-2xl p-6">
+              <div className="text-center py-16 bg-white dark:bg-[#1c1712] border border-dashed border-gray-200 dark:border-stone-800 rounded-2xl p-6">
                 <div className="text-4xl mb-3">🛒</div>
-                <h3 className="font-bold text-gray-800 text-lg mb-1">No orders placed yet</h3>
-                <p className="text-sm text-gray-500 mb-5">Browse today's harvest to get fresh produce directly from local farmers.</p>
+                <h3 className="font-bold text-gray-800 dark:text-stone-200 text-lg mb-1">No orders placed yet</h3>
+                <p className="text-sm text-gray-500 dark:text-stone-400 mb-5">Browse today's harvest to get fresh produce directly from local farmers.</p>
                 <Link href="/" className="bg-leaf hover:bg-emerald-800 text-white font-semibold px-5 py-2.5 rounded-xl transition">
                   Browse Fresh Produce
                 </Link>
               </div>
             ) : (
               myPurchases.map((o) => (
-                <div key={o.id} className="border rounded-2xl p-5 bg-white shadow-sm hover:shadow-md transition">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-gray-100">
+                <div key={o.id} className="border border-gray-200 dark:border-stone-800 rounded-2xl p-5 bg-white dark:bg-[#1c1712] shadow-sm hover:shadow-md transition">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-gray-100 dark:border-stone-800">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400 font-mono">Order #{o.id.slice(0, 8)}</span>
-                        <span className="text-xs text-gray-400">·</span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-400 dark:text-stone-500 font-mono">Order #{o.id.slice(0, 8)}</span>
+                        <span className="text-xs text-gray-400 dark:text-stone-500">·</span>
+                        <span className="text-xs text-gray-500 dark:text-stone-400">
                           {new Date(o.created_at).toLocaleDateString("en-IN", {
                             day: "numeric",
                             month: "short",
@@ -187,27 +187,27 @@ export default function Orders() {
                           })}
                         </span>
                       </div>
-                      <h3 className="font-bold text-lg text-gray-900 mt-1">{o.products?.name}</h3>
-                      <p className="text-xs text-gray-500">
-                        From <strong>{o.farmer?.farm_name || "Local Farmer"}</strong> {o.farmer?.location ? `· 📍 ${o.farmer?.location}` : ""}
+                      <h3 className="font-bold text-lg text-gray-900 dark:text-stone-100 mt-1">{o.products?.name}</h3>
+                      <p className="text-xs text-gray-500 dark:text-stone-400">
+                        From <strong className="text-gray-900 dark:text-stone-200">{o.farmer?.farm_name || "Local Farmer"}</strong> {o.farmer?.location ? `· 📍 ${o.farmer?.location}` : ""}
                       </p>
                     </div>
                     <div>{getStatusBadge(o.status)}</div>
                   </div>
 
-                  <div className="pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 border-t border-gray-50 mt-2">
-                    <div className="space-y-1 text-sm text-gray-600">
+                  <div className="pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 border-t border-gray-50 dark:border-stone-800/80 mt-2">
+                    <div className="space-y-1 text-sm text-gray-600 dark:text-stone-300">
                       <p>
-                        Quantity: <strong>{o.quantity} {o.products?.unit}</strong>
+                        Quantity: <strong className="text-gray-900 dark:text-stone-200">{o.quantity} {o.products?.unit}</strong>
                       </p>
                       <p>
                         Total Amount: <strong className="text-leaf text-base">₹{o.total_price}</strong>
-                        <span className="text-xs text-gray-400 ml-2">
+                        <span className="text-xs text-gray-400 dark:text-stone-500 ml-2">
                           ({o.payment_method === "upi" ? "UPI on Delivery" : "Cash on Delivery"})
                         </span>
                       </p>
                       {o.delivery_address && (
-                        <p className="text-xs text-gray-500 pt-1">
+                        <p className="text-xs text-gray-500 dark:text-stone-400 pt-1">
                           📍 Delivery to: {o.delivery_address}
                         </p>
                       )}
@@ -216,7 +216,7 @@ export default function Orders() {
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         onClick={() => setInvoiceModal({ isOpen: true, order: o })}
-                        className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs border border-gray-200"
+                        className="text-xs bg-gray-100 dark:bg-[#251e17] hover:bg-gray-200 dark:hover:bg-stone-800 text-gray-800 dark:text-stone-200 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs border border-gray-200 dark:border-stone-700"
                         title="View & Download Tax Invoice / Delivery Receipt"
                       >
                         <span>📄</span>
@@ -226,7 +226,7 @@ export default function Orders() {
                       {o.payment_method === "upi" && o.status !== "cancelled" && (
                         <button
                           onClick={() => setUpiModal({ isOpen: true, order: o })}
-                          className="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs"
+                          className="text-xs bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs"
                         >
                           <span>💳</span>
                           <span>Pay / View UPI QR</span>
@@ -235,7 +235,7 @@ export default function Orders() {
 
                       {o.status === "delivered" && (
                         reviewedOrders[o.id] ? (
-                          <span className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full flex items-center gap-1">
+                          <span className="text-xs font-semibold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 px-2.5 py-1 rounded-full flex items-center gap-1">
                             <span>★</span>
                             <span>Rated {reviewedOrders[o.id]}/5</span>
                           </span>
@@ -268,31 +268,31 @@ export default function Orders() {
         {!loading && userId && activeTab === "sales" && (
           <div className="space-y-4">
             {receivedOrders.length === 0 ? (
-              <div className="text-center py-16 bg-white border border-dashed rounded-2xl p-6">
+              <div className="text-center py-16 bg-white dark:bg-[#1c1712] border border-dashed border-gray-200 dark:border-stone-800 rounded-2xl p-6">
                 <div className="text-4xl mb-3">🌾</div>
-                <h3 className="font-bold text-gray-800 text-lg mb-1">No customer orders received yet</h3>
-                <p className="text-sm text-gray-500 mb-5">When buyers order your listed produce, delivery requests will appear here.</p>
+                <h3 className="font-bold text-gray-800 dark:text-stone-200 text-lg mb-1">No customer orders received yet</h3>
+                <p className="text-sm text-gray-500 dark:text-stone-400 mb-5">When buyers order your listed produce, delivery requests will appear here.</p>
                 <Link href="/farmer/dashboard" className="bg-leaf hover:bg-emerald-800 text-white font-semibold px-5 py-2.5 rounded-xl transition">
                   Manage Produce Listings
                 </Link>
               </div>
             ) : (
               receivedOrders.map((o) => (
-                <div key={o.id} className="border-2 border-emerald-100 rounded-2xl p-5 bg-white shadow-sm hover:shadow-md transition">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-gray-100">
+                <div key={o.id} className="border-2 border-emerald-100 dark:border-emerald-900/60 rounded-2xl p-5 bg-white dark:bg-[#1c1712] shadow-sm hover:shadow-md transition">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-gray-100 dark:border-stone-800">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded">
+                        <span className="text-xs bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold px-2 py-0.5 rounded border border-transparent dark:border-emerald-800/40">
                           Incoming Customer Order
                         </span>
-                        <span className="text-xs text-gray-400 font-mono">#{o.id.slice(0, 8)}</span>
+                        <span className="text-xs text-gray-400 dark:text-stone-500 font-mono">#{o.id.slice(0, 8)}</span>
                       </div>
-                      <h3 className="font-bold text-lg text-gray-900 mt-1">
+                      <h3 className="font-bold text-lg text-gray-900 dark:text-stone-100 mt-1">
                         {o.quantity} {o.products?.unit} of {o.products?.name}
                       </h3>
                       <p className="text-sm font-semibold text-leaf mt-0.5">
                         Amount to Collect: ₹{o.total_price}
-                        <span className="text-xs font-normal text-gray-500 ml-2">
+                        <span className="text-xs font-normal text-gray-500 dark:text-stone-400 ml-2">
                           [{o.payment_method === "upi" ? "UPI on Delivery" : "Cash on Delivery"}]
                         </span>
                       </p>
@@ -301,23 +301,23 @@ export default function Orders() {
                   </div>
 
                   {/* Customer Delivery Information */}
-                  <div className="py-4 bg-gray-50 -mx-5 px-5 my-2 border-y border-gray-100 text-sm">
-                    <p className="font-bold text-gray-800 text-xs uppercase tracking-wider mb-2">
+                  <div className="py-4 bg-gray-50 dark:bg-[#251e17] -mx-5 px-5 my-2 border-y border-gray-100 dark:border-stone-800 text-sm">
+                    <p className="font-bold text-gray-800 dark:text-stone-200 text-xs uppercase tracking-wider mb-2">
                       Customer Delivery Details
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <span className="text-xs text-gray-500 block">Customer Name:</span>
-                        <span className="font-semibold text-gray-900">
+                        <span className="text-xs text-gray-500 dark:text-stone-400 block">Customer Name:</span>
+                        <span className="font-semibold text-gray-900 dark:text-stone-100">
                           {o.consumer?.full_name || "Harvest Hub Buyer"}
                         </span>
                       </div>
                       {o.phone && (
                         <div>
-                          <span className="text-xs text-gray-500 block">Phone Contact:</span>
+                          <span className="text-xs text-gray-500 dark:text-stone-400 block">Phone Contact:</span>
                           <a
                             href={`tel:${o.phone}`}
-                            className="font-bold text-emerald-700 hover:underline flex items-center gap-1"
+                            className="font-bold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1"
                           >
                             📞 {o.phone} (Call Customer)
                           </a>
@@ -325,9 +325,9 @@ export default function Orders() {
                       )}
                     </div>
                     {o.delivery_address && (
-                      <div className="mt-2 pt-2 border-t border-gray-200">
-                        <span className="text-xs text-gray-500 block">Delivery Address:</span>
-                        <p className="text-gray-800 font-medium">{o.delivery_address}</p>
+                      <div className="mt-2 pt-2 border-t border-gray-200 dark:border-stone-700">
+                        <span className="text-xs text-gray-500 dark:text-stone-400 block">Delivery Address:</span>
+                        <p className="text-gray-800 dark:text-stone-200 font-medium">{o.delivery_address}</p>
                       </div>
                     )}
                   </div>
@@ -336,7 +336,7 @@ export default function Orders() {
                   <div className="flex flex-wrap gap-2 pt-3 justify-end items-center">
                     <button
                       onClick={() => setInvoiceModal({ isOpen: true, order: o })}
-                      className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs border border-gray-200 mr-auto"
+                      className="text-xs bg-gray-100 dark:bg-[#251e17] hover:bg-gray-200 dark:hover:bg-stone-800 text-gray-800 dark:text-stone-200 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs border border-gray-200 dark:border-stone-700 mr-auto"
                       title="Print Farmer Delivery Challan / Invoice"
                     >
                       <span>📄</span>
@@ -345,7 +345,7 @@ export default function Orders() {
 
                     {o.status !== "delivered" && o.status !== "cancelled" && (
                       <>
-                        <span className="text-xs text-gray-500">Update Status:</span>
+                        <span className="text-xs text-gray-500 dark:text-stone-400">Update Status:</span>
                         {o.status === "pending" && (
                           <button
                             onClick={() => updateStatus(o.id, "confirmed")}
@@ -368,7 +368,7 @@ export default function Orders() {
                               updateStatus(o.id, "cancelled");
                             }
                           }}
-                          className="text-xs border border-red-300 text-red-600 hover:bg-red-50 font-medium px-3.5 py-2 rounded-lg transition"
+                          className="text-xs border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 font-medium px-3.5 py-2 rounded-lg transition"
                         >
                           Cancel Order
                         </button>

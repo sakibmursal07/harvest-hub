@@ -124,22 +124,22 @@ export default function CommunityPools() {
   });
 
   return (
-    <section id="community-pools" className="my-10 bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/90 shadow-sm relative overflow-hidden">
+    <section id="community-pools" className="my-10 bg-white dark:bg-[#1c1712] rounded-3xl p-6 sm:p-8 border border-gray-200/90 dark:border-stone-800 shadow-sm relative overflow-hidden">
       
       {/* Background Decor */}
-      <div className="absolute top-0 right-0 -mt-6 -mr-6 w-36 h-36 bg-emerald-50 rounded-full blur-2xl pointer-events-none"></div>
+      <div className="absolute top-0 right-0 -mt-6 -mr-6 w-36 h-36 bg-emerald-50 dark:bg-emerald-950/20 rounded-full blur-2xl pointer-events-none"></div>
 
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-5 border-b border-gray-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-5 border-b border-gray-100 dark:border-stone-800">
         <div>
-          <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2 border border-transparent dark:border-emerald-800/40">
             <span>🏘️</span>
             <span>{t("pools_badge")}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-soil tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-soil dark:text-stone-100 tracking-tight">
             {t("pools_title")}
           </h2>
-          <p className="text-gray-600 text-xs sm:text-sm mt-1 max-w-xl">
+          <p className="text-gray-600 dark:text-stone-400 text-xs sm:text-sm mt-1 max-w-xl">
             {t("pools_desc")}
           </p>
         </div>
@@ -157,24 +157,24 @@ export default function CommunityPools() {
 
       {/* Active Pool Alert if Joined */}
       {activePoolId && (
-        <div className="mb-6 p-4 bg-emerald-50 border-2 border-emerald-500 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn">
+        <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500 dark:border-emerald-600 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🎉</span>
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
                 You are currently in an Active Pool:
               </span>
-              <h4 className="text-sm font-extrabold text-soil">
+              <h4 className="text-sm font-extrabold text-soil dark:text-stone-100">
                 {pools.find((p) => p.id === activePoolId)?.name || "Your Neighborhood Pool"}
               </h4>
-              <p className="text-[11px] text-gray-600">
+              <p className="text-[11px] text-gray-600 dark:text-stone-300">
                 12% Group Discount and FREE Farm Shipping will automatically apply during checkout!
               </p>
             </div>
           </div>
           <button
             onClick={handleLeavePool}
-            className="text-xs text-gray-500 hover:text-red-600 font-semibold underline px-2 py-1"
+            className="text-xs text-gray-500 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400 font-semibold underline px-2 py-1"
           >
             Leave Pool
           </button>
@@ -189,11 +189,11 @@ export default function CommunityPools() {
             placeholder={t("pools_search_placeholder")}
             value={searchPin}
             onChange={(e) => setSearchPin(e.target.value)}
-            className="w-full text-xs sm:text-sm bg-[#FAF7F2] border border-gray-200 rounded-xl py-2.5 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-leaf"
+            className="w-full text-xs sm:text-sm bg-[#FAF7F2] dark:bg-[#251e17] border border-gray-200 dark:border-stone-700 text-soil dark:text-stone-100 placeholder-gray-400 dark:placeholder-stone-500 rounded-xl py-2.5 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-leaf"
           />
-          <span className="absolute left-3 top-2.5 text-gray-400 text-sm">🔍</span>
+          <span className="absolute left-3 top-2.5 text-gray-400 dark:text-stone-500 text-sm">🔍</span>
         </div>
-        <span className="text-xs text-gray-500 font-medium whitespace-nowrap">
+        <span className="text-xs text-gray-500 dark:text-stone-400 font-medium whitespace-nowrap">
           Showing {filteredPools.length} nearby pool{filteredPools.length === 1 ? "" : "s"}
         </span>
       </div>
@@ -210,19 +210,19 @@ export default function CommunityPools() {
               key={pool.id}
               className={`rounded-2xl p-5 border transition-all duration-200 flex flex-col justify-between ${
                 isJoined
-                  ? "border-emerald-600 bg-emerald-50/60 shadow-md ring-2 ring-emerald-500/30"
-                  : "border-gray-200 bg-white hover:border-emerald-400 hover:shadow-md"
+                  ? "border-emerald-600 bg-emerald-50/60 dark:bg-emerald-950/30 shadow-md ring-2 ring-emerald-500/30"
+                  : "border-gray-200 dark:border-stone-800 bg-white dark:bg-[#221c15] hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md"
               }`}
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
-                    <h3 className="font-extrabold text-sm sm:text-base text-soil leading-snug">
+                    <h3 className="font-extrabold text-sm sm:text-base text-soil dark:text-stone-100 leading-snug">
                       {pool.name}
                     </h3>
-                    <p className="text-[11px] text-gray-500">{pool.locality} · PIN {pool.pincode}</p>
+                    <p className="text-[11px] text-gray-500 dark:text-stone-400">{pool.locality} · PIN {pool.pincode}</p>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300">
                     12% OFF
                   </span>
                 </div>
@@ -230,12 +230,12 @@ export default function CommunityPools() {
                 {/* Progress Bar */}
                 <div className="my-3">
                   <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                    <span className="text-soil">
+                    <span className="text-soil dark:text-stone-200">
                       {pool.currentMembers}/{pool.targetMembers} {t("pools_members_joined")}
                     </span>
-                    <span className="text-emerald-700">{progressPercent}%</span>
+                    <span className="text-emerald-700 dark:text-emerald-400">{progressPercent}%</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                  <div className="w-full bg-gray-100 dark:bg-stone-800 rounded-full h-2.5 overflow-hidden">
                     <div
                       className={`h-2.5 rounded-full transition-all duration-500 ${
                         isFull ? "bg-emerald-600" : "bg-leaf"
@@ -243,7 +243,7 @@ export default function CommunityPools() {
                       style={{ width: `${progressPercent}%` }}
                     ></div>
                   </div>
-                  <p className="text-[10px] text-gray-500 mt-1">
+                  <p className="text-[10px] text-gray-500 dark:text-stone-400 mt-1">
                     {isFull
                       ? "✨ Pool full! Maximum discount unlocked for all."
                       : `Only ${pool.targetMembers - pool.currentMembers} more neighbor needed to complete pool!`}
@@ -251,14 +251,14 @@ export default function CommunityPools() {
                 </div>
 
                 {/* Logistics & Sustainability info */}
-                <div className="space-y-1.5 py-2 text-[11px] text-gray-600 border-t border-gray-100">
+                <div className="space-y-1.5 py-2 text-[11px] text-gray-600 dark:text-stone-400 border-t border-gray-100 dark:border-stone-800/80">
                   <div className="flex items-center gap-1.5">
                     <span>🚚</span>
                     <span>{t("pools_consolidated_delivery")} {pool.deliveryWindow}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span>🌱</span>
-                    <span className="text-emerald-800 font-semibold">
+                    <span className="text-emerald-800 dark:text-emerald-400 font-semibold">
                       Saves ~{pool.carbonSavedKg} kg CO₂ {t("pools_carbon_saved")}
                     </span>
                   </div>
@@ -270,7 +270,7 @@ export default function CommunityPools() {
               </div>
 
               {/* Action Button */}
-              <div className="pt-3 mt-2 border-t border-gray-100">
+              <div className="pt-3 mt-2 border-t border-gray-100 dark:border-stone-800/80">
                 {isJoined ? (
                   <button
                     disabled
@@ -282,7 +282,7 @@ export default function CommunityPools() {
                 ) : (
                   <button
                     onClick={() => handleJoinPool(pool)}
-                    className="w-full py-2 rounded-xl bg-soil hover:bg-[#3d3223] text-white font-semibold text-xs transition flex items-center justify-center gap-1 shadow-xs"
+                    className="w-full py-2 rounded-xl bg-soil dark:bg-stone-700 hover:bg-[#3d3223] dark:hover:bg-stone-600 text-white font-semibold text-xs transition flex items-center justify-center gap-1 shadow-xs"
                   >
                     <span>{t("pools_join_btn")}</span>
                   </button>
@@ -296,15 +296,15 @@ export default function CommunityPools() {
       {/* Create Pool Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-soil/75 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-md bg-[#FAF7F2] rounded-3xl p-6 shadow-2xl border border-gray-200 animate-modal-in">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+          <div className="w-full max-w-md bg-[#FAF7F2] dark:bg-[#1e1913] rounded-3xl p-6 shadow-2xl border border-gray-200 dark:border-stone-800 animate-modal-in">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 dark:border-stone-800">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🏘️</span>
-                <h3 className="font-extrabold text-base text-soil">Start a Neighborhood Pool</h3>
+                <h3 className="font-extrabold text-base text-soil dark:text-stone-100">Start a Neighborhood Pool</h3>
               </div>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-700 text-sm"
+                className="text-gray-400 dark:text-stone-400 hover:text-gray-700 dark:hover:text-stone-200 text-sm"
               >
                 ✕
               </button>
@@ -312,7 +312,7 @@ export default function CommunityPools() {
 
             <form onSubmit={handleCreatePool} className="space-y-3 text-xs sm:text-sm">
               <div>
-                <label className="block font-semibold text-soil mb-1">
+                <label className="block font-semibold text-soil dark:text-stone-200 mb-1">
                   Apartment / Society / Colony Name
                 </label>
                 <input
@@ -321,34 +321,34 @@ export default function CommunityPools() {
                   placeholder="e.g. Royal Palms Apartment, Block B"
                   value={createForm.name}
                   onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-leaf text-xs sm:text-sm"
+                  className="w-full border border-gray-200 dark:border-stone-700 rounded-xl px-3 py-2 bg-white dark:bg-[#2a2219] text-soil dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-leaf text-xs sm:text-sm"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-soil mb-1">Area / Locality</label>
+                <label className="block font-semibold text-soil dark:text-stone-200 mb-1">Area / Locality</label>
                 <input
                   type="text"
                   placeholder="e.g. Sector 14, Near Metro Station"
                   value={createForm.locality}
                   onChange={(e) => setCreateForm({ ...createForm, locality: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-leaf text-xs sm:text-sm"
+                  className="w-full border border-gray-200 dark:border-stone-700 rounded-xl px-3 py-2 bg-white dark:bg-[#2a2219] text-soil dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-leaf text-xs sm:text-sm"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-soil mb-1">Postal PIN Code</label>
+                <label className="block font-semibold text-soil dark:text-stone-200 mb-1">Postal PIN Code</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. 411038"
                   value={createForm.pincode}
                   onChange={(e) => setCreateForm({ ...createForm, pincode: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-leaf text-xs sm:text-sm"
+                  className="w-full border border-gray-200 dark:border-stone-700 rounded-xl px-3 py-2 bg-white dark:bg-[#2a2219] text-soil dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-leaf text-xs sm:text-sm"
                 />
               </div>
 
-              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-950 space-y-1">
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-950 dark:text-emerald-200 space-y-1">
                 <span className="font-bold block">💡 How pooling works:</span>
                 <p>
                   As soon as you create the pool, your orders unlock free farm delivery and 12% off. 
@@ -366,7 +366,7 @@ export default function CommunityPools() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="py-2.5 px-4 rounded-xl border border-gray-300 text-gray-700 text-xs sm:text-sm hover:bg-gray-100 transition"
+                  className="py-2.5 px-4 rounded-xl border border-gray-300 dark:border-stone-700 text-gray-700 dark:text-stone-300 text-xs sm:text-sm hover:bg-gray-100 dark:hover:bg-stone-800 transition"
                 >
                   Cancel
                 </button>

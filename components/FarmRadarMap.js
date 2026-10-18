@@ -219,19 +219,19 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
   }
 
   return (
-    <section className="mb-10 bg-white rounded-3xl p-5 sm:p-7 border border-gray-200/90 shadow-sm overflow-hidden">
+    <section className="mb-10 bg-white dark:bg-[#1e1913] rounded-3xl p-5 sm:p-7 border border-gray-200/90 dark:border-stone-800 shadow-sm overflow-hidden transition-colors duration-200">
       
       {/* Top Banner & Location Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-gray-100 dark:border-stone-800">
         <div>
-          <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2">
             <span>🗺️</span>
             <span>Hyper-Local Farm Radar</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-soil tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-soil dark:text-stone-100 tracking-tight">
             Farms Near You & Food Miles Tracker
           </h2>
-          <p className="text-gray-600 text-xs sm:text-sm mt-0.5">
+          <p className="text-gray-600 dark:text-stone-300 text-xs sm:text-sm mt-0.5">
             Discover local farms within driving radius. Bypassing state-wide transport reduces food miles and delivers peak freshness!
           </p>
         </div>
@@ -241,7 +241,7 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
           <button
             onClick={handleDetectGps}
             disabled={detecting}
-            className="px-3.5 py-2 rounded-xl bg-leaf hover:bg-emerald-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95"
+            className="px-3.5 py-2 rounded-xl bg-leaf hover:bg-emerald-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
           >
             {detecting ? (
               <>
@@ -260,7 +260,7 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
           <select
             onChange={(e) => handleSelectDemoHub(e.target.value)}
             defaultValue=""
-            className="bg-[#FAF7F2] border border-gray-200 text-soil text-xs font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-leaf cursor-pointer"
+            className="bg-[#FAF7F2] dark:bg-[#28221a] border border-gray-200 dark:border-stone-700 text-soil dark:text-stone-200 text-xs font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-leaf cursor-pointer"
             title="Pick a regional location to test distance"
           >
             <option value="" disabled>
@@ -276,7 +276,7 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 text-xs font-semibold text-gray-500 hover:text-soil border border-gray-200 rounded-xl hover:bg-gray-50 transition"
+            className="p-2 text-xs font-semibold text-gray-500 dark:text-stone-400 hover:text-soil dark:hover:text-stone-200 border border-gray-200 dark:border-stone-700 rounded-xl hover:bg-gray-50 dark:hover:bg-stone-800 transition cursor-pointer"
             title={isExpanded ? "Collapse Map" : "Expand Map"}
           >
             {isExpanded ? "Hide Map ▲" : "Show Map ▼"}
@@ -286,37 +286,37 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
 
       {/* GPS Status / Error alert */}
       {userLocation && (
-        <div className="mt-3 py-2 px-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs flex items-center justify-between text-emerald-900 animate-fadeIn">
+        <div className="mt-3 py-2 px-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs flex items-center justify-between text-emerald-900 dark:text-emerald-200 animate-fadeIn">
           <div className="flex items-center gap-2">
-            <span className="text-emerald-600 font-bold">✓ Active GPS:</span>
+            <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓ Active GPS:</span>
             <span>{userLocation.label} ({userLocation.lat}, {userLocation.lng})</span>
           </div>
-          <span className="font-semibold text-[11px] text-emerald-700">
+          <span className="font-semibold text-[11px] text-emerald-700 dark:text-emerald-300">
             Farms sorted by nearest driving radius
           </span>
         </div>
       )}
 
       {locError && (
-        <div className="mt-3 py-2 px-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900">
+        <div className="mt-3 py-2 px-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-900 dark:text-amber-200">
           ⚠️ {locError}
         </div>
       )}
 
       {/* Map Container */}
       {isExpanded && (
-        <div className="mt-4 relative rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
+        <div className="mt-4 relative rounded-2xl overflow-hidden border border-gray-200 dark:border-stone-700 shadow-inner">
           <div ref={mapContainerRef} className="w-full h-72 sm:h-96 z-0" />
 
           {/* Map Legend Overlay */}
-          <div className="absolute bottom-3 left-3 z-10 bg-white/95 backdrop-blur-sm p-2.5 rounded-xl border border-gray-200 shadow-sm text-[11px] space-y-1">
+          <div className="absolute bottom-3 left-3 z-10 bg-white/95 dark:bg-stone-900/95 backdrop-blur-sm p-2.5 rounded-xl border border-gray-200 dark:border-stone-700 shadow-sm text-[11px] space-y-1">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 bg-[#2563EB] rounded-full inline-block border-2 border-white shadow-xs"></span>
-              <span className="font-medium text-gray-700">You (Customer)</span>
+              <span className="font-medium text-gray-700 dark:text-stone-300">You (Customer)</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 bg-leaf rounded-md inline-block border border-white shadow-xs"></span>
-              <span className="font-medium text-gray-700">Local Verified Farms</span>
+              <span className="font-medium text-gray-700 dark:text-stone-300">Local Verified Farms</span>
             </div>
           </div>
         </div>
@@ -324,26 +324,26 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
 
       {/* Selected Farm Detail Drawer */}
       {selectedFarm && (
-        <div className="mt-4 p-4 bg-emerald-50/80 border border-emerald-300 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn shadow-xs">
+        <div className="mt-4 p-4 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn shadow-xs">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h4 className="font-extrabold text-sm sm:text-base text-soil">🌾 {selectedFarm.farmName}</h4>
+              <h4 className="font-extrabold text-sm sm:text-base text-soil dark:text-stone-100">🌾 {selectedFarm.farmName}</h4>
               {selectedFarm.distanceKm && (
                 <span className="text-xs bg-emerald-700 text-white font-bold px-2.5 py-0.5 rounded-full">
                   📍 {selectedFarm.distanceKm} km away
                 </span>
               )}
               {selectedFarm.verified && (
-                <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full">
+                <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold px-2 py-0.5 rounded-full">
                   ✓ Verified Farm
                 </span>
               )}
             </div>
-            <p className="text-xs text-gray-600 mt-1">
+            <p className="text-xs text-gray-600 dark:text-stone-300 mt-1">
               📍 {selectedFarm.locationText} · <strong>{selectedFarm.products.length} product(s)</strong> available for direct order
             </p>
             {selectedFarm.distanceKm && (
-              <p className="text-[11px] text-emerald-800 font-semibold mt-1">
+              <p className="text-[11px] text-emerald-800 dark:text-emerald-300 font-semibold mt-1">
                 🌱 Direct local transit saves ~{calculateCarbonSavedKg(selectedFarm.distanceKm)} kg of transport CO₂
               </p>
             )}
@@ -357,7 +357,7 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
                   const el = document.getElementById("produce-catalog");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="text-xs bg-leaf hover:bg-emerald-800 text-white font-bold px-3.5 py-2 rounded-xl transition shadow-xs flex items-center gap-1.5 active:scale-95"
+                className="text-xs bg-leaf hover:bg-emerald-800 text-white font-bold px-3.5 py-2 rounded-xl transition shadow-xs flex items-center gap-1.5 active:scale-95 cursor-pointer"
               >
                 <span>🔍</span>
                 <span>View This Farm's Produce ({selectedFarm.products.length}) ↑</span>
@@ -365,7 +365,7 @@ export default function FarmRadarMap({ products = [], userLocation, onLocationCh
             )}
             <button
               onClick={() => setSelectedFarm(null)}
-              className="text-xs text-gray-500 hover:text-gray-800 font-semibold underline px-2 py-1"
+              className="text-xs text-gray-500 dark:text-stone-400 hover:text-gray-800 dark:hover:text-stone-200 font-semibold underline px-2 py-1 cursor-pointer"
             >
               Close
             </button>

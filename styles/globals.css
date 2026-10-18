@@ -2,9 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
 body {
-  background-color: #F1E9D6;
+  background-color: #FAF7F2;
   color: #2B2318;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.dark body {
+  background-color: #14110e;
+  color: #f3eee6;
+}
+
+/* Dark mode Leaflet map enhancement */
+html.dark .leaflet-tile-pane {
+  filter: brightness(0.85) invert(1) contrast(1.1) hue-rotate(180deg) saturate(0.85);
+}
+
+html.dark .leaflet-container {
+  background: #14110e !important;
+}
+
+html.dark .leaflet-popup-content-wrapper,
+html.dark .leaflet-popup-tip {
+  background: #1e1913 !important;
+  color: #f3eee6 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7) !important;
 }
 
 /* Animations for Modals and UI Elements */

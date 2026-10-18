@@ -3,12 +3,14 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { useLanguage } from "../context/LanguageContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const { language, setLanguage, t, languages } = useLanguage();
+  const { theme, toggleTheme, isDark, mounted } = useTheme();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -41,13 +43,13 @@ export default function Navbar() {
   const role = profile?.role;
 
   return (
-    <nav className="flex flex-wrap items-center justify-between px-4 sm:px-6 py-3.5 bg-soil text-white border-b border-[#3d3223] sticky top-0 z-40 shadow-md gap-3">
+    <nav className="flex flex-wrap items-center justify-between px-4 sm:px-6 py-3.5 bg-soil dark:bg-[#18140f] text-white border-b border-[#3d3223] dark:border-stone-800 sticky top-0 z-40 shadow-md gap-3 transition-colors duration-200">
       <Link href="/" className="font-bold text-xl flex items-center gap-2 hover:opacity-90 transition">
         <span>🌾</span>
         <span className="tracking-tight">Harvest Hub</span>
       </Link>
 
-      <div className="flex items-center gap-3 sm:gap-5 text-sm font-medium flex-wrap">
+      <div className="flex items-center gap-3 sm:gap-4 text-sm font-medium flex-wrap">
         <Link
           href="/"
           className={`hover:text-emerald-300 transition ${
@@ -111,6 +113,22 @@ export default function Navbar() {
             </button>
           ))}
         </div>
+
+        {/* Dark Mode Switch */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/30 hover:bg-black/50 border border-emerald-500/30 text-xs font-semibold text-gray-200 hover:text-white transition shadow-xs cursor-pointer active:scale-95"
+          title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          aria-label="Toggle Dark Mode"
+        >
+          <span className="text-sm transform transition-transform duration-300 hover:rotate-12">
+            {mounted ? (isDark ? "☀️" : "🌙") : "🌙"}
+          </span>
+          <span className="hidden sm:inline text-[11px] font-bold">
+            {mounted ? (isDark ? t("nav_light_mode") : t("nav_dark_mode")) : t("nav_dark_mode")}
+          </span>
+        </button>
 
         {user ? (
           <>

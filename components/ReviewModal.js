@@ -53,22 +53,22 @@ export default function ReviewModal({ isOpen, onClose, order, onSubmitted }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+      <div className="bg-white dark:bg-[#1e1913] border border-gray-200 dark:border-stone-800 rounded-2xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative animate-in fade-in zoom-in duration-200">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg font-bold w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-stone-200 text-lg font-bold w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-stone-800 flex items-center justify-center transition"
         >
           ✕
         </button>
 
-        <div className="w-12 h-12 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-3">
+        <div className="w-12 h-12 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 border border-transparent dark:border-amber-800/40">
           ⭐
         </div>
 
-        <h3 className="text-xl font-bold text-gray-900 text-center">Rate Your Produce</h3>
-        <p className="text-xs text-gray-500 text-center mt-1 mb-5">
-          How was the quality of <strong>{order.products?.name}</strong> from{" "}
-          <strong>{order.farmer?.farm_name || "the farmer"}</strong>?
+        <h3 className="text-xl font-bold text-gray-900 dark:text-stone-100 text-center">Rate Your Produce</h3>
+        <p className="text-xs text-gray-500 dark:text-stone-400 text-center mt-1 mb-5">
+          How was the quality of <strong className="text-gray-900 dark:text-stone-200">{order.products?.name}</strong> from{" "}
+          <strong className="text-gray-900 dark:text-stone-200">{order.farmer?.farm_name || "the farmer"}</strong>?
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -88,7 +88,7 @@ export default function ReviewModal({ isOpen, onClose, order, onSubmitted }) {
                     className={
                       (hoverRating || rating) >= star
                         ? "text-amber-400 drop-shadow-xs"
-                        : "text-gray-300"
+                        : "text-gray-300 dark:text-stone-600"
                     }
                   >
                     ★
@@ -96,7 +96,7 @@ export default function ReviewModal({ isOpen, onClose, order, onSubmitted }) {
                 </button>
               ))}
             </div>
-            <p className="text-xs font-semibold text-gray-600">
+            <p className="text-xs font-semibold text-gray-600 dark:text-stone-300">
               {rating === 5 && "Excellent & Farm-Fresh! 🌿"}
               {rating === 4 && "Great Quality! 👍"}
               {rating === 3 && "Good / Average Produce 🙂"}
@@ -106,7 +106,7 @@ export default function ReviewModal({ isOpen, onClose, order, onSubmitted }) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-stone-300 uppercase mb-1">
               Share your feedback (Optional)
             </label>
             <textarea
@@ -114,12 +114,12 @@ export default function ReviewModal({ isOpen, onClose, order, onSubmitted }) {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Tell others about the freshness, taste, and packaging..."
-              className="w-full border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm focus:border-leaf focus:ring-1 focus:ring-leaf outline-none"
+              className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 placeholder-gray-400 dark:placeholder-stone-500 rounded-xl px-3.5 py-2.5 text-sm focus:border-leaf focus:ring-1 focus:ring-leaf outline-none"
             />
           </div>
 
           {errorMessage && (
-            <p className="text-red-600 text-xs bg-red-50 p-3 rounded-lg border border-red-200">
+            <p className="text-red-600 dark:text-red-400 text-xs bg-red-50 dark:bg-red-950/30 p-3 rounded-lg border border-red-200 dark:border-red-900/50">
               {errorMessage}
             </p>
           )}
@@ -128,7 +128,7 @@ export default function ReviewModal({ isOpen, onClose, order, onSubmitted }) {
             <button
               type="button"
               onClick={onClose}
-              className="w-1/3 border border-gray-300 py-2.5 rounded-xl font-medium text-gray-700 text-sm hover:bg-gray-50 transition"
+              className="w-1/3 border border-gray-300 dark:border-stone-700 py-2.5 rounded-xl font-medium text-gray-700 dark:text-stone-300 text-sm hover:bg-gray-50 dark:hover:bg-stone-800 transition"
             >
               Cancel
             </button>

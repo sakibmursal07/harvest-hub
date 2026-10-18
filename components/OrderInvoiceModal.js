@@ -101,14 +101,14 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
       {/* Main Invoice Modal Card */}
       <div
         id="harvest-invoice-container"
-        className="relative bg-white text-gray-900 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden z-10 border border-gray-200"
+        className="relative bg-white text-gray-900 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden z-10 border border-gray-200 dark:border-stone-800"
       >
         
         {/* Modal Top Control Bar (Screen only) */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#FAF7F2] border-b border-gray-200 print-hidden">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#FAF7F2] dark:bg-[#1a1612] border-b border-gray-200 dark:border-stone-800 print-hidden">
           <div className="flex items-center gap-2">
             <span className="text-xl">📄</span>
-            <span className="font-extrabold text-sm sm:text-base text-soil">
+            <span className="font-extrabold text-sm sm:text-base text-soil dark:text-stone-100">
               Farm-to-Table Tax Invoice / Delivery Receipt
             </span>
           </div>
@@ -122,7 +122,7 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
             </button>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-sm flex items-center justify-center transition"
+              className="w-8 h-8 rounded-full bg-gray-200 dark:bg-stone-700 hover:bg-gray-300 dark:hover:bg-stone-600 text-gray-700 dark:text-stone-200 font-bold text-sm flex items-center justify-center transition"
             >
               ✕
             </button>

@@ -105,22 +105,22 @@ export default function FarmerDashboard() {
       <main className="max-w-4xl mx-auto p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
+            <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-stone-100">
               🌾 {profile.farm_name || "Farmer"} Dashboard
               {profile.verified ? (
-                <span className="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-transparent dark:border-emerald-800/40">
                   ✓ Verified Farm
                 </span>
               ) : (
-                <span className="text-xs bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-semibold px-2 py-0.5 rounded-full border border-transparent dark:border-amber-800/40">
                   Pending Verification
                 </span>
               )}
             </h1>
-            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 mt-1">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-stone-400 mt-1">
               <span>📍 {profile.location || "Location not set yet"} · {profile.full_name}</span>
               {profile.upi_id && (
-                <span className="text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-md font-medium">
+                <span className="text-xs bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-md font-medium">
                   💳 UPI: {profile.upi_id}
                 </span>
               )}
@@ -129,11 +129,11 @@ export default function FarmerDashboard() {
           <div className="flex gap-2">
             <button
               onClick={() => setEditingProfile(!editingProfile)}
-              className="border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-3.5 py-2 rounded-lg transition"
+              className="border border-gray-300 dark:border-stone-700 hover:bg-gray-50 dark:hover:bg-stone-800 text-gray-700 dark:text-stone-300 text-sm font-medium px-3.5 py-2 rounded-xl transition"
             >
               {editingProfile ? "Cancel" : "Edit Farm Info"}
             </button>
-            <Link href="/farmer/add-product" className="bg-leaf hover:bg-emerald-800 text-white font-semibold text-sm px-4 py-2 rounded-lg transition">
+            <Link href="/farmer/add-product" className="bg-leaf hover:bg-emerald-800 text-white font-semibold text-sm px-4 py-2 rounded-xl transition shadow-sm">
               + Add Product
             </Link>
           </div>
@@ -141,60 +141,60 @@ export default function FarmerDashboard() {
 
         {/* Profile Editor Modal / Inline Card */}
         {editingProfile && (
-          <form onSubmit={saveProfile} className="bg-white border rounded-xl p-5 mb-6 shadow-sm space-y-4">
-            <h3 className="font-semibold text-base text-gray-800">Edit Farm Information</h3>
+          <form onSubmit={saveProfile} className="bg-white dark:bg-[#1e1913] border border-gray-200 dark:border-stone-800 rounded-2xl p-5 mb-6 shadow-sm space-y-4">
+            <h3 className="font-semibold text-base text-gray-800 dark:text-stone-100">Edit Farm Information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Farm Name</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-stone-300 mb-1">Farm Name</label>
                 <input
                   type="text"
                   required
                   value={profileForm.farm_name}
                   onChange={(e) => setProfileForm({ ...profileForm, farm_name: e.target.value })}
-                  className="w-full border rounded-lg px-3 py-2 text-sm"
+                  className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-leaf"
                   placeholder="e.g. Green Valley Organic Farm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Farm Location (City / District)</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-stone-300 mb-1">Farm Location (City / District)</label>
                 <input
                   type="text"
                   required
                   value={profileForm.location}
                   onChange={(e) => setProfileForm({ ...profileForm, location: e.target.value })}
-                  className="w-full border rounded-lg px-3 py-2 text-sm"
+                  className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-leaf"
                   placeholder="e.g. Kolhapur, Maharashtra"
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-gray-600 mb-1">
+                <label className="block text-xs font-medium text-gray-600 dark:text-stone-300 mb-1">
                   Farmer UPI ID / VPA (For direct customer QR code payments)
                 </label>
                 <input
                   type="text"
                   value={profileForm.upi_id}
                   onChange={(e) => setProfileForm({ ...profileForm, upi_id: e.target.value })}
-                  className="w-full border rounded-lg px-3 py-2 text-sm"
+                  className="w-full border border-gray-300 dark:border-stone-700 bg-white dark:bg-[#282118] text-gray-900 dark:text-stone-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-leaf"
                   placeholder="e.g. 9876543210@upi or farm@okhdfcbank"
                 />
-                <p className="text-[11px] text-gray-400 mt-1">
+                <p className="text-[11px] text-gray-400 dark:text-stone-500 mt-1">
                   Customers who select "UPI on Delivery" will scan a dynamic QR code linked directly to this UPI ID.
                 </p>
               </div>
             </div>
-            {profileMessage && <p className="text-sm text-emerald-700">{profileMessage}</p>}
+            {profileMessage && <p className="text-sm text-emerald-700 dark:text-emerald-400">{profileMessage}</p>}
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setEditingProfile(false)}
-                className="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded"
+                className="px-3 py-1.5 text-xs text-gray-600 dark:text-stone-400 hover:bg-gray-100 dark:hover:bg-stone-800 rounded-xl"
               >
                 Close
               </button>
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="bg-leaf hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-1.5 rounded"
+                className="bg-leaf hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-1.5 rounded-xl shadow-xs"
               >
                 {savingProfile ? "Saving..." : "Save Changes"}
               </button>
@@ -204,28 +204,28 @@ export default function FarmerDashboard() {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-xs text-gray-500 font-medium">Total Listings</p>
-            <p className="text-2xl font-bold mt-1 text-gray-800">{products.length}</p>
+          <div className="bg-white dark:bg-[#1e1913] border border-gray-200 dark:border-stone-800 rounded-2xl p-4 shadow-sm">
+            <p className="text-xs text-gray-500 dark:text-stone-400 font-medium">Total Listings</p>
+            <p className="text-2xl font-bold mt-1 text-gray-800 dark:text-stone-100">{products.length}</p>
           </div>
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-xs text-gray-500 font-medium">Active Online</p>
-            <p className="text-2xl font-bold mt-1 text-emerald-700">{activeCount}</p>
+          <div className="bg-white dark:bg-[#1e1913] border border-gray-200 dark:border-stone-800 rounded-2xl p-4 shadow-sm">
+            <p className="text-xs text-gray-500 dark:text-stone-400 font-medium">Active Online</p>
+            <p className="text-2xl font-bold mt-1 text-emerald-700 dark:text-emerald-400">{activeCount}</p>
           </div>
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-xs text-gray-500 font-medium">Total Stock (Units)</p>
-            <p className="text-2xl font-bold mt-1 text-soil">{totalStock}</p>
+          <div className="bg-white dark:bg-[#1e1913] border border-gray-200 dark:border-stone-800 rounded-2xl p-4 shadow-sm">
+            <p className="text-xs text-gray-500 dark:text-stone-400 font-medium">Total Stock (Units)</p>
+            <p className="text-2xl font-bold mt-1 text-soil dark:text-amber-400">{totalStock}</p>
           </div>
         </div>
 
         {!profile.verified && (
-          <p className="bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm rounded-lg p-3 mb-5">
+          <p className="bg-yellow-50 dark:bg-amber-950/40 border border-yellow-300 dark:border-amber-800 text-yellow-800 dark:text-amber-200 text-sm rounded-xl p-3 mb-5">
             Your farm account is pending admin verification. Your listings are still visible to buyers while you wait.
           </p>
         )}
 
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold text-gray-800">Your Produce Listings</h2>
+          <h2 className="text-lg font-bold text-gray-800 dark:text-stone-100">Your Produce Listings</h2>
           <Link href="/orders" className="text-sm text-leaf hover:underline font-semibold">
             View Received Customer Orders →
           </Link>
@@ -233,31 +233,31 @@ export default function FarmerDashboard() {
 
         <div className="space-y-3">
           {products.length === 0 && (
-            <div className="text-center py-10 bg-white border border-dashed rounded-xl">
-              <p className="text-gray-500 mb-3">You haven't listed any products yet.</p>
-              <Link href="/farmer/add-product" className="bg-leaf text-white font-semibold text-sm px-4 py-2 rounded-lg">
+            <div className="text-center py-10 bg-white dark:bg-[#1e1913] border border-dashed border-gray-200 dark:border-stone-800 rounded-2xl">
+              <p className="text-gray-500 dark:text-stone-400 mb-3">You haven't listed any products yet.</p>
+              <Link href="/farmer/add-product" className="bg-leaf text-white font-semibold text-sm px-4 py-2 rounded-xl">
                 Create First Listing
               </Link>
             </div>
           )}
           {products.map((p) => (
-            <div key={p.id} className="border rounded-xl p-4 bg-white flex justify-between items-center shadow-sm">
+            <div key={p.id} className="border border-gray-200 dark:border-stone-800 rounded-2xl p-4 bg-white dark:bg-[#1e1913] flex justify-between items-center shadow-sm">
               <div className="flex items-center gap-4">
                 {p.image_url ? (
-                  <img src={p.image_url} alt={p.name} className="w-14 h-14 object-cover rounded-lg" />
+                  <img src={p.image_url} alt={p.name} className="w-14 h-14 object-cover rounded-xl" />
                 ) : (
-                  <div className="w-14 h-14 bg-gray-100 rounded-lg flex items-center justify-center text-2xl">
+                  <div className="w-14 h-14 bg-gray-100 dark:bg-stone-800 rounded-xl flex items-center justify-center text-2xl">
                     🌾
                   </div>
                 )}
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-gray-800">{p.name}</p>
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                    <p className="font-semibold text-gray-800 dark:text-stone-100">{p.name}</p>
+                    <span className="text-xs bg-gray-100 dark:bg-stone-800 text-gray-600 dark:text-stone-300 px-2 py-0.5 rounded-md">
                       {p.category}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 mt-0.5">
+                  <p className="text-sm text-gray-500 dark:text-stone-400 mt-0.5">
                     ₹{p.price} / {p.unit} · <span className={p.quantity_available === 0 ? "text-red-500 font-semibold" : ""}>{p.quantity_available} {p.unit} in stock</span>
                   </p>
                 </div>
@@ -265,15 +265,15 @@ export default function FarmerDashboard() {
               <div className="flex gap-2">
                 <button
                   onClick={() => toggleActive(p.id, p.is_active)}
-                  className={`text-xs border px-3 py-1.5 rounded-lg font-medium transition ${
-                    p.is_active ? "border-gray-300 text-gray-700 hover:bg-gray-50" : "bg-emerald-50 text-emerald-700 border-emerald-300"
+                  className={`text-xs border px-3 py-1.5 rounded-xl font-medium transition ${
+                    p.is_active ? "border-gray-300 dark:border-stone-700 text-gray-700 dark:text-stone-300 hover:bg-gray-50 dark:hover:bg-stone-800" : "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
                   }`}
                 >
                   {p.is_active ? "Deactivate" : "Activate"}
                 </button>
                 <button
                   onClick={() => deleteProduct(p.id)}
-                  className="text-xs border border-red-200 text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg transition"
+                  className="text-xs border border-red-200 dark:border-red-900/60 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 py-1.5 rounded-xl transition"
                 >
                   Delete
                 </button>

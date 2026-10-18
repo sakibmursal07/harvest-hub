@@ -4,19 +4,48 @@ import "leaflet/dist/leaflet.css";
 import ChatBot from "../components/ChatBot";
 import AiPriceEstimatorModal from "../components/AiPriceEstimatorModal";
 import { LanguageProvider } from "../context/LanguageContext";
+import { ThemeProvider } from "../context/ThemeContext";
 
 export default function App({ Component, pageProps }) {
   return (
-    <LanguageProvider>
-      <Head>
-        <title>Harvest Hub | Fresh Produce From Local Farmers</title>
-        <meta name="description" content="Connect directly with local farmers and buy farm-fresh vegetables, fruits, and grains with local delivery." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>" />
-      </Head>
-      <Component {...pageProps} />
-      <ChatBot />
-      <AiPriceEstimatorModal />
-    </LanguageProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <Head>
+          <title>Harvest Hub | Fresh Produce From Local Farmers</title>
+          <meta
+            name="description"
+            content="Connect directly with local farmers and buy farm-fresh vegetables, fruits, and grains with local delivery."
+          />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>"
+          />
+          {/* Prevent Flash of Unstyled Theme (FOUC) */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  try {
+                    var saved = localStorage.getItem('harvest_theme');
+                    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (saved === 'dark' || (!saved && prefersDark)) {
+                      document.documentElement.classList.add('dark');
+                      document.documentElement.style.colorScheme = 'dark';
+                    } else {
+                      document.documentElement.classList.remove('dark');
+                      document.documentElement.style.colorScheme = 'light';
+                    }
+                  } catch (e) {}
+                })();
+              `,
+            }}
+          />
+        </Head>
+        <Component {...pageProps} />
+        <ChatBot />
+        <AiPriceEstimatorModal />
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }

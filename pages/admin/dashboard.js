@@ -75,25 +75,25 @@ export default function AdminDashboard() {
       <Navbar />
       <main className="max-w-5xl mx-auto p-6 space-y-10">
         <div>
-          <h1 className="text-2xl font-bold mb-1">Admin Dashboard</h1>
-          <p className="text-gray-500 text-sm">Verify farmers and moderate listings.</p>
+          <h1 className="text-2xl font-bold mb-1 text-gray-900 dark:text-stone-100">Admin Dashboard</h1>
+          <p className="text-gray-500 dark:text-stone-400 text-sm">Verify farmers and moderate listings.</p>
         </div>
 
         <section>
-          <h2 className="text-lg font-semibold mb-3">Farmer Verification</h2>
+          <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-stone-100">Farmer Verification</h2>
           <div className="space-y-2">
-            {farmers.length === 0 && <p className="text-gray-500 text-sm">No farmers yet.</p>}
+            {farmers.length === 0 && <p className="text-gray-500 dark:text-stone-400 text-sm">No farmers yet.</p>}
             {farmers.map((f) => (
-              <div key={f.id} className="flex items-center justify-between bg-white border rounded-lg p-4">
+              <div key={f.id} className="flex items-center justify-between bg-white dark:bg-[#1e1913] border border-gray-200 dark:border-stone-800 rounded-xl p-4 shadow-sm">
                 <div>
-                  <p className="font-medium">{f.farm_name || "(no farm name)"}</p>
-                  <p className="text-xs text-gray-500">{f.full_name} · {f.location || "no location"}</p>
+                  <p className="font-medium text-gray-900 dark:text-stone-100">{f.farm_name || "(no farm name)"}</p>
+                  <p className="text-xs text-gray-500 dark:text-stone-400">{f.full_name} · {f.location || "no location"}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${f.verified ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${f.verified ? "bg-green-100 dark:bg-emerald-950/60 text-green-700 dark:text-emerald-300" : "bg-yellow-100 dark:bg-amber-950/60 text-yellow-700 dark:text-amber-300"}`}>
                     {f.verified ? "Verified" : "Pending"}
                   </span>
-                  <button onClick={() => verifyFarmer(f.id, f.verified)} className="text-xs border px-3 py-1.5 rounded">
+                  <button onClick={() => verifyFarmer(f.id, f.verified)} className="text-xs border border-gray-300 dark:border-stone-700 text-gray-700 dark:text-stone-300 hover:bg-gray-50 dark:hover:bg-stone-800 px-3 py-1.5 rounded-xl transition">
                     {f.verified ? "Unverify" : "Approve"}
                   </button>
                 </div>
@@ -103,25 +103,25 @@ export default function AdminDashboard() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-3">All Listings</h2>
+          <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-stone-100">All Listings</h2>
           <div className="space-y-2">
-            {products.length === 0 && <p className="text-gray-500 text-sm">No products yet.</p>}
+            {products.length === 0 && <p className="text-gray-500 dark:text-stone-400 text-sm">No products yet.</p>}
             {products.map((p) => (
-              <div key={p.id} className="flex items-center justify-between bg-white border rounded-lg p-4">
+              <div key={p.id} className="flex items-center justify-between bg-white dark:bg-[#1e1913] border border-gray-200 dark:border-stone-800 rounded-xl p-4 shadow-sm">
                 <div>
-                  <p className="font-medium">{p.name}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-medium text-gray-900 dark:text-stone-100">{p.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-stone-400">
                     {p.profiles?.farm_name || "Unknown farm"} · ₹{p.price}/{p.unit}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${p.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${p.is_active ? "bg-green-100 dark:bg-emerald-950/60 text-green-700 dark:text-emerald-300" : "bg-gray-100 dark:bg-stone-800 text-gray-600 dark:text-stone-300"}`}>
                     {p.is_active ? "Active" : "Hidden"}
                   </span>
-                  <button onClick={() => toggleProductActive(p.id, p.is_active)} className="text-xs border px-3 py-1.5 rounded">
+                  <button onClick={() => toggleProductActive(p.id, p.is_active)} className="text-xs border border-gray-300 dark:border-stone-700 text-gray-700 dark:text-stone-300 hover:bg-gray-50 dark:hover:bg-stone-800 px-3 py-1.5 rounded-xl transition">
                     {p.is_active ? "Hide" : "Unhide"}
                   </button>
-                  <button onClick={() => deleteProduct(p.id)} className="text-xs border border-red-300 text-red-600 px-3 py-1.5 rounded">
+                  <button onClick={() => deleteProduct(p.id)} className="text-xs border border-red-300 dark:border-red-900/60 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 py-1.5 rounded-xl transition">
                     Delete
                   </button>
                 </div>
